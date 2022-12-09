@@ -23,7 +23,7 @@ stages:
     - docker push $IMAGE_NAME
 
 
-.unit-test:
+unit-test:
   image: python:3.8.1
   stage: test
   script:
