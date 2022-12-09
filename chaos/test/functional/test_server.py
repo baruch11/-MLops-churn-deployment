@@ -14,9 +14,8 @@ def test_example1():
 
     data = {"question": 2}
 
-    response = requests.get(url=url, json=data, headers=headers)
+    response = requests.post(url=url, json=data, headers=headers)
     results = response.json()
-    
     assert results["answer"] == data["question"]*2
 
 
@@ -26,11 +25,9 @@ def test_example2():
     headers = {"Content-type": "application/json"}
 
     data = {"question": "a"}
-
-    response = requests.get(url=url, json=data, headers=headers)
+    response = requests.post(url=url, json=data, headers=headers)
     results = response.json()
-    
-    assert results["answer"] == 0
+    assert results["detail"][0]["msg"] == "value is not a valid float"
 
 
 def test_example3():
@@ -40,7 +37,7 @@ def test_example3():
 
     data = {"wrong_field": "a"}
 
-    response = requests.get(url=url, json=data, headers=headers)
+    response = requests.post(url=url, json=data, headers=headers)
     results = response.json()
     
     assert results["answer"] == 0
