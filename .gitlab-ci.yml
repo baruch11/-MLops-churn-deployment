@@ -22,7 +22,6 @@ stages:
     - docker build --pull -t $IMAGE_NAME .
     - docker push $IMAGE_NAME
 
-
 unit-test:
   image: python:3.8.1
   stage: test
