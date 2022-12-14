@@ -3,25 +3,27 @@ stages:
   - test
   - build
 
-
-.build-docker-image:
+build-docker-image:
   stage: build
   image: docker:latest
   services:
-    - docker:dind
-
+  - docker:20.10.16-dind
+  
   variables:
-    REGISTRY_HOST: eu.gcr.io
-    IMAGE_NAME: $REGISTRY_HOST/$GCP_PROJECT/$CI_PROJECT_NAME:$CI_COMMIT_BRANCH
+    REGISTRY_HOST: registry.gitlab.com
+    IMAGE_NAME: $CI_REGISTRY/yotta-academy/mle-bootcamp/projects/ml-prod-projects/project-3-fall-2022/chaos-1/churn_app
 
   before_script:
-    # see https://cloud.google.com/container-registry/docs/advanced-authentication#json-key
-    - cat $GITLAB_REGISTRY_KEY | docker login  -u _json_key --password-stdin $REGISTRY_HOST
+    - echo "$CI_DEPLOY_PASSWORD"  | docker login $REGISTRY_HOST --username $CI_DEPLOY_USER --password-stdin
 
+  # TODO : login to docker registry
   script:
-    - docker build --pull -t $IMAGE_NAME .
+    - docker build -t $IMAGE_NAME .
     - docker push $IMAGE_NAME
 
+
+
+    
 unit-test:
   image: python:3.8.1
   stage: test
