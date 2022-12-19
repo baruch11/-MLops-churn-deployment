@@ -1,0 +1,21 @@
+============================= test session starts ==============================
+platform linux -- Python 3.9.12, pytest-7.2.0, pluggy-1.0.0
+rootdir: /home/ubuntu/PythonProject/Projet3/chaos-1
+plugins: cov-4.0.0, mock-3.10.0, anyio-3.6.2, dash-2.7.1
+collected 4 items
+
+chaos/test/unit/test_customer.py ..                                      [ 50%]
+chaos/test/unit/test_hello_world.py ..                                   [100%]
+
+---------- coverage: platform linux, python 3.9.12-final-0 -----------
+Name                                  Stmts   Miss  Cover
+---------------------------------------------------------
+chaos/domain/customer.py                 12      0   100%
+chaos/test/unit/test_customer.py         12      0   100%
+chaos/test/unit/test_hello_world.py       7      0   100%
+---------------------------------------------------------
+TOTAL                                    31      0   100%
+Coverage HTML written to dir coverage/htmlcov
+
+
+============================== 4 passed in 1.70s ===============================
