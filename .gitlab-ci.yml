@@ -14,13 +14,14 @@ build-docker-image:
     IMAGE_NAME: $CI_REGISTRY/yotta-academy/mle-bootcamp/projects/ml-prod-projects/project-3-fall-2022/chaos-1/churn_app
 
   before_script:
-    - mkdir ~/.ssh && ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
-    - echo "$SSH_CHURN_ACCESS" > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
+    # We need to create the folder /tmp because using the docker --ssh, the "~" characeter didn't work 
+    - mkdir /tmp/.ssh && ssh-keyscan gitlab.com >> /tmp/.ssh/known_hosts
+    - echo "$SSH_CHURN_ACCESS" > /tmp/.ssh/id_ed25519 && chmod 600 /tmp/.ssh/id_ed25519
     - echo "$CI_DEPLOY_PASSWORD"  | docker login $REGISTRY_HOST --username $CI_DEPLOY_USER --password-stdin
 
   # TODO : login to docker registry
   script:
-    - docker build -t $IMAGE_NAME . --build-arg SSH_CHURN_ACCESS="$SSH_CHURN_ACCESS"
+    - DOCKER_BUILDKIT=1 docker build --ssh churn_ssh=/tmp/.ssh/id_ed25519 -t $IMAGE_NAME .
     - docker push $IMAGE_NAME
 
 
