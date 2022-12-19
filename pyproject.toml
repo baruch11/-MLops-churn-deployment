@@ -15,6 +15,7 @@ psycopg2-binary = "^2.9.5"
 scikit-learn = "^1.2.0"
 pandas = "^1.5.2"
 churn-sec = {git = "ssh://git@gitlab.com/yotta-academy/mle-bootcamp/projects/ml-project/project-1-fall-2022/churn-modelling-salima-charles-emeric.git", rev = "v2"}
+pytest-mock = "^3.10.0"
 
 
 [build-system]

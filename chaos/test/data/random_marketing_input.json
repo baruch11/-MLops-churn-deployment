@@ -1,0 +1,35 @@
+{
+    "BALANCE": {
+        "0": 93259.57
+    },
+    "NB_PRODUITS": {
+        "0": 3
+    },
+    "CARTE_CREDIT": {
+        "0": true
+    },
+    "SALAIRE": {
+        "0": 141035.65
+    },
+    "SCORE_CREDIT": {
+        "0": 581.0
+    },
+    "DATE_ENTREE": {
+        "0": "2015-01-01 00:00:00"
+    },
+    "NOM": {
+        "0": "Mazzi"
+    },
+    "PAYS": {
+        "0": "Allemagne"
+    },
+    "SEXE": {
+        "0": true
+    },
+    "AGE": {
+        "0": 43
+    },
+    "MEMBRE_ACTIF": {
+        "0": false
+    }
+}

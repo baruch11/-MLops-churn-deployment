@@ -3,13 +3,12 @@ import pickle
 
 import numpy as np
 
-from chaos.infrastructure.socio_eco import SocioEco
 
+from churn.domain.churn_model import ChurnModelFinal
 this_dir = os.path.dirname(os.path.realpath(__file__))
 
 
 class Customer:
-    MODEL_PATH = os.path.join(this_dir, "model.pkl")
 
     def __init__(self, marketing: dict):
         """
@@ -19,9 +18,8 @@ class Customer:
             marketing data, used as features for prediction. At the moment, only the following keys are used: 'AGE', 'BALANCE'
         """
         self.marketing = marketing
+        self.model = ChurnModelFinal().load()
 
-        with open(self.MODEL_PATH, "rb") as handle:
-            self.model = pickle.load(handle)
 
     def predict_subscription(self) -> float:
         """Returns appetence score [0,1] of the customer predicted by the model
@@ -36,11 +34,7 @@ class Customer:
         We construct the features from the caracteristics and the socio economic data.
         At the moment, we use arbitrary features. This should be changed.
         """
-        # TODO: all the code below should be changed.
-        # It's only a skeleton to show how to mix marketing and socio eco data for prediction
-        socio_eco = SocioEco().read().iloc[0]["EMPLOYMENT_VARIATION_RATE"]
-        age = self.marketing["AGE"]
-        balance = self.marketing["BALANCE"]
-        features = np.array((age, balance, socio_eco))
-        appetence = self.model.predict_proba(features.reshape(1, -1))
-        return appetence[0][1]
+        #TODO : Create a predict proba method on churnfinalmodel
+        #TODO : pydantic on the output of the model.  We want a value between 0.0 and 1.0, not boolean. 
+        predict_proba = self.model.predict(self.marketing)
+        return predict_proba
