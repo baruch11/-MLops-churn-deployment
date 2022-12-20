@@ -14,4 +14,3 @@ else:
 
 with open(config_file_path, 'r') as file_in:
     config = yaml.safe_load(file_in)
-

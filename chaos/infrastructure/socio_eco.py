@@ -3,15 +3,14 @@ import pandas as pd
 from chaos.infrastructure.connexion import Connexion
 
 
-engine = Connexion().connect()
-
-
 class SocioEco:
     TABLE = "socio_eco"
 
-    @classmethod
-    def read(cls) -> pd.DataFrame:
+    def __init__(self):
+        self.engine = Connexion().connect()
+
+    def read(self) -> pd.DataFrame:
         """Returns socio eco data"""
-        query = f"SELECT * FROM {cls.TABLE}"
-        data = pd.read_sql(query, engine)
+        query = f"SELECT * FROM {self.TABLE}"
+        data = pd.read_sql(query, self.engine)
         return data

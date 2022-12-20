@@ -21,7 +21,6 @@ class Question(BaseModel):
     MEMBRE_ACTIF: bool = False
 
 
-
 class Answer(BaseModel):
     answer: float
 
