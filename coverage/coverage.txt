@@ -2,20 +2,29 @@
 platform linux -- Python 3.9.12, pytest-7.2.0, pluggy-1.0.0
 rootdir: /home/ubuntu/PythonProject/Projet3/chaos-1
 plugins: cov-4.0.0, mock-3.10.0, anyio-3.6.2, dash-2.7.1
-collected 4 items
+collected 5 items
 
-chaos/test/unit/test_customer.py ..                                      [ 50%]
+chaos/test/unit/test_customer.py ...                                     [ 60%]
 chaos/test/unit/test_hello_world.py ..                                   [100%]
 
 ---------- coverage: platform linux, python 3.9.12-final-0 -----------
-Name                                  Stmts   Miss  Cover
----------------------------------------------------------
-chaos/domain/customer.py                 12      0   100%
-chaos/test/unit/test_customer.py         12      0   100%
-chaos/test/unit/test_hello_world.py       7      0   100%
----------------------------------------------------------
-TOTAL                                    31      0   100%
+Name                                             Stmts   Miss  Cover
+--------------------------------------------------------------------
+chaos/application/__init__.py                        0      0   100%
+chaos/application/server.py                         27     27     0%
+chaos/application/train_model_for_appetence.py      21     21     0%
+chaos/domain/__init__.py                             0      0   100%
+chaos/domain/customer.py                            10      0   100%
+chaos/infrastructure/__init__.py                     0      0   100%
+chaos/infrastructure/config/config.py               10      1    90%
+chaos/infrastructure/connexion.py                   23      7    70%
+chaos/infrastructure/socio_eco.py                   10      3    70%
+chaos/test/conftest.py                               7      0   100%
+chaos/test/unit/test_customer.py                    21      1    95%
+chaos/test/unit/test_hello_world.py                  7      0   100%
+--------------------------------------------------------------------
+TOTAL                                              136     60    56%
 Coverage HTML written to dir coverage/htmlcov
 
 
-============================== 4 passed in 1.70s ===============================
+============================== 5 passed in 2.39s ===============================
