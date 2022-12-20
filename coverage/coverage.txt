@@ -15,7 +15,6 @@ chaos/application/server.py                         27     27     0%
 chaos/application/train_model_for_appetence.py      21     21     0%
 chaos/domain/__init__.py                             0      0   100%
 chaos/domain/customer.py                            10      0   100%
-chaos/domain/load_model.py                           9      9     0%
 chaos/infrastructure/__init__.py                     0      0   100%
 chaos/infrastructure/config/config.py               10      1    90%
 chaos/infrastructure/connexion.py                   23      7    70%
@@ -24,8 +23,8 @@ chaos/test/conftest.py                               7      0   100%
 chaos/test/unit/test_customer.py                    21      1    95%
 chaos/test/unit/test_hello_world.py                  7      0   100%
 --------------------------------------------------------------------
-TOTAL                                              145     69    52%
+TOTAL                                              136     60    56%
 Coverage HTML written to dir coverage/htmlcov
 
 
-============================== 5 passed in 1.68s ===============================
+============================== 5 passed in 2.39s ===============================
