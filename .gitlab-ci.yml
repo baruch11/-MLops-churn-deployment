@@ -25,17 +25,17 @@ build-docker-image:
     - docker push $IMAGE_NAME
 
 
-
-    
 unit-test:
   image: python:3.9
   stage: test
   before_script:
     - mkdir ~/.ssh && ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
     - echo "$SSH_CHURN_ACCESS" > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
-  script:
+    - echo "$CONFIG_YML" > chaos/infrastructure/config/config_template.yml
+    - export YOTTA_ML3_CONFIGURATION_PATH=$(pwd)/chaos/infrastructure/config/config_template.yml
     - pip install poetry
     - poetry config virtualenvs.in-project true --local
     - poetry install
     - source .venv/bin/activate
+  script:
     - pytest chaos/test/unit
