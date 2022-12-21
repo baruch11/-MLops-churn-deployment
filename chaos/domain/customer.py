@@ -1,5 +1,7 @@
+"""Customer model."""
 import os
 from churn.domain.churn_model import ChurnModelFinal
+import pandas as pd
 
 this_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -35,5 +37,5 @@ class Customer:
         # TODO : Create a predict proba method on churnfinalmodel
         # TODO : pydantic on the output of the model.  We want a value between
         #  0.0 and 1.0, not boolean.
-        predict_proba = self.model.predict(self.marketing)
+        predict_proba = self.model.predict(pd.DataFrame([self.marketing]))
         return predict_proba
