@@ -1,10 +1,11 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from chaos.domain.customer import Customer
+import pandas as pd
 
 app = FastAPI()
 
-DEFAULT_RESPONSE = 0
+DEFAULT_RESPONSE = -1
 
 
 class Question(BaseModel):
@@ -28,7 +29,7 @@ class Answer(BaseModel):
 @app.post("/example/")
 def example(q: Question):
     try:
-        customer = Customer(q)
+        customer = Customer(pd.DataFrame([q.dict()]))
         answer = customer.predict_subscription()
     except (ValueError, TypeError, KeyError):
         answer = DEFAULT_RESPONSE
