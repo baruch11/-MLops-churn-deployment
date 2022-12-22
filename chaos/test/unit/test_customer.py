@@ -1,8 +1,7 @@
+import pytest
 from chaos.domain.customer import Customer
 from interpret.glassbox.ebm.ebm import ExplainableBoostingClassifier
 from unittest import TestCase
-import pandas as pd
-import numpy as np
 from chaos.infrastructure.socio_eco import SocioEco
 
 
@@ -26,16 +25,21 @@ class TestModel(object):
             customer.model.pipe.get_params()['classifier'],
             ExplainableBoostingClassifier)
 
-    def test_model_prediction(self):
+    @pytest.mark.parametrize(
+        "marketing, expected",
+        [({"BALANCE": 93259.57, "NB_PRODUITS": 3, "CARTE_CREDIT": True,
+           "SALAIRE": 141035.65, "SCORE_CREDIT": 581.0,
+           "DATE_ENTREE": "2015-01-01 00:00:00", "NOM": "Mazzi",
+           "PAYS": "Allemagne", "SEXE": True, "AGE": 43,
+           "MEMBRE_ACTIF": False}, True)])
+    def test_model_prediction(self, marketing, expected):
         """ Here we provide an object corresponding to a customer, and we
                 verify that the prediction worked, and that the output is True.
         """
-        marketing_dataframe = pd.read_json(
-            "chaos/test/data/random_marketing_input.json"
-            )
-        customer = Customer(marketing=marketing_dataframe)
+
+        customer = Customer(marketing)
         predict_proba_serie = customer.predict_subscription()
-        assert predict_proba_serie.values[0] is np.True_
+        TestCase().assertTrue(predict_proba_serie.values[0] == expected)
 
 
 class TestSocioEco(object):

@@ -72,7 +72,8 @@ def detect(customer_input: CustomerInput):
     customer_input : CustomerInput(BaseModel)
         Customer marketing characterics
     """
-    customer = Customer(pd.DataFrame([customer_input.dict()]))
+
+    customer = Customer(customer_input.dict())
     answer = customer.predict_subscription()
 
     return Answer(answer=answer)
