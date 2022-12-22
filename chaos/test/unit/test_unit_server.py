@@ -1,11 +1,14 @@
-import unittest
-from chaos.application.server import Question, example, Answer
+import pytest
+from chaos.application.server import detect, CustomerInput
 
 
-class TesttServer(unittest.TestCase):
+class TestServer(object):
 
-    def test_route_example_no_exept(self):
+    @pytest.mark.parametrize(
+        "test_input, expected",
+        [(CustomerInput(BALANCE=0), 0)])
+    def test_route_example(self, test_input, expected):
         """Test route example."""
-        req = Question()
-        ans = example(req)
-        self.assertTrue(ans != Answer(answer=-1.0))
+        ans = detect(test_input)
+        print(f"test_route ans: {ans}")
+        assert ans.answer == expected
