@@ -1,12 +1,12 @@
 import pytest
-from chaos.application.server import detect, Question
+from chaos.application.server import detect, CustomerInput
 
 
 class TestServer(object):
 
     @pytest.mark.parametrize(
         "test_input, expected",
-        [(Question(BALANCE=0), 0)])
+        [(CustomerInput(BALANCE=0), 0)])
     def test_route_example(self, test_input, expected):
         """Test route example."""
         ans = detect(test_input)

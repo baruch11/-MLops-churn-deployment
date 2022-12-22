@@ -7,7 +7,7 @@ from typing import Optional, Literal
 from datetime import datetime
 
 
-class Question(BaseModel):
+class CustomerInput(BaseModel):
     """Churn detection parameters.
 
     Parameters
@@ -64,7 +64,7 @@ class Answer(BaseModel):
 
 
 @app.post("/detect/", tags=["detect"])
-def detect(q: Question):
+def detect(q: CustomerInput):
     """Call Customer model churn detection.
 
     Parameters
