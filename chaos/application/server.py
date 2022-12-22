@@ -64,15 +64,15 @@ class Answer(BaseModel):
 
 
 @app.post("/detect/", tags=["detect"])
-def detect(q: CustomerInput):
+def detect(customer_input: CustomerInput):
     """Call Customer model churn detection.
 
     Parameters
     ----------
-    q : Question(BaseModel)
+    customer_input : CustomerInput(BaseModel)
         Customer marketing characterics
     """
-    customer = Customer(pd.DataFrame([q.dict()]))
+    customer = Customer(pd.DataFrame([customer_input.dict()]))
     answer = customer.predict_subscription()
 
     return Answer(answer=answer)
