@@ -12,12 +12,12 @@ class TestServer(object):
 
     @pytest.mark.parametrize(
         "test_input, expected",
-        [(CustomerInput(BALANCE=0), 0.5)])
+        [(CustomerInput(BALANCE=0), False)])
     def test_route_example(self, test_input, expected):
         """Test route example."""
         ans = detect(test_input)
         print(f"test_route ans: {ans}")
-        assert ans.answer < expected
+        assert (ans.answer > 0.5) == expected
 
     def test_perf(self):
         EXPECTED_F1_SCORE = 0.61
