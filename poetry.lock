@@ -205,8 +205,8 @@ scikit-learn = "^1.2.0"
 [package.source]
 type = "git"
 url = "ssh://git@gitlab.com/yotta-academy/mle-bootcamp/projects/ml-project/project-1-fall-2022/churn-modelling-salima-charles-emeric.git"
-reference = "v2"
-resolved_reference = "0adb5a91d98bbdc48d54b7a03d0d951a73637dc4"
+reference = "v3"
+resolved_reference = "c216448fcfdb67dcc501b887241e216b3ca9dff5"
 
 [[package]]
 name = "click"
@@ -3568,4 +3568,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "8082df088e4f490de46500937367fa03ed330cdef55082010d6d960858b6e8e3"
+content-hash = "6a80414e84eb088921bdeef132f70c912c0fc9b3c589448ba0e665ef61b099df"
