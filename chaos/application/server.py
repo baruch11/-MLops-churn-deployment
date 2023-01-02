@@ -16,8 +16,8 @@ class CustomerInput(BaseModel):
         customer bank account balance
     NB_PRODUITS : int
         how many products the customer owns
-    CARTE_CREDIT : bool
-        true if the customer has a credit card
+    CARTE_CREDIT : str ("Yes" or "No")
+        'Yes' if the customer has a credit card
     SALAIRE : float
         customer's salary
     SCORE_CREDIT : float
@@ -31,20 +31,20 @@ class CustomerInput(BaseModel):
         customer's gender, 'H' (Male) of 'F' (Female)
     AGE : int
         customer's age
-    MEMBRE_ACTIF:
-        true if the customer is active on his bank account
+    MEMBRE_ACTIF: str ('Yes' or 'No')
+        'Yes' if the customer is active on his bank account
     """
 
     BALANCE: float = None
     NB_PRODUITS: int = None
-    CARTE_CREDIT: bool = None
+    CARTE_CREDIT: Literal["Yes", "No"] = None
     SALAIRE: float = None
     SCORE_CREDIT: float = None
     DATE_ENTREE: Optional[datetime] = None
     PAYS: str = None
     SEXE: Literal["H", "F"] = None
     AGE: int = None
-    MEMBRE_ACTIF: bool = None
+    MEMBRE_ACTIF: Literal["Yes", "No"] = None
 
 
 app = FastAPI(
