@@ -6,3 +6,6 @@ COV_CONFIG_FILE_LOC := coverage/.coveragerc
 coverage-unit:
 	@pytest --cov=$(PROJECT_NAME) $(UNIT_TEST_DIR) --cov-report=html --cov-config=$(COV_CONFIG_FILE_LOC) --cov-report term > $(COV_REPORT_TXT)
 
+build-docker-image:
+	DOCKER_BUILDKIT=1 docker build --no-cache --platform linux/amd64 \
+		--ssh churn_ssh=$(SSH_PRIVATE_KEY) -t chaos-1 .
