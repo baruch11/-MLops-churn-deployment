@@ -15,6 +15,6 @@ spec:
         app: chaos-1-deployment
     spec:
       containers:
-        - name: start-api
-          image: eu.gcr.io/yotta-312004/chaos-1:develop
+        - name: churn-api
+          image: eu.gcr.io/coyotta-2022/chaos-1:develop
           imagePullPolicy: Always

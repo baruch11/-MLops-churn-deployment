@@ -2,27 +2,12 @@
 stages:
   - test
   - build
+  - deployment
 
-build-docker-image:
-  stage: build
-  image: docker:latest
-  services:
-  - docker:20.10.16-dind
-  
-  variables:
-    REGISTRY_HOST: registry.gitlab.com
-    IMAGE_NAME: $CI_REGISTRY/yotta-academy/mle-bootcamp/projects/ml-prod-projects/project-3-fall-2022/chaos-1/churn_app
-
-  before_script:
-    # We need to create the folder /tmp because using the docker --ssh, the "~" characeter didn't work 
-    - mkdir /tmp/.ssh && ssh-keyscan gitlab.com >> /tmp/.ssh/known_hosts
-    - echo "$SSH_CHURN_ACCESS" > /tmp/.ssh/id_ed25519 && chmod 600 /tmp/.ssh/id_ed25519
-    - echo "$CI_DEPLOY_PASSWORD"  | docker login $REGISTRY_HOST --username $CI_DEPLOY_USER --password-stdin
-
-  # TODO : login to docker registry
-  script:
-    - DOCKER_BUILDKIT=1 docker build --ssh churn_ssh=/tmp/.ssh/id_ed25519 -t $IMAGE_NAME .
-    - docker push $IMAGE_NAME
+variables:
+  REGISTRY_HOST: eu.gcr.io
+  IMAGE_NAME: $REGISTRY_HOST/coyotta-2022/$CI_PROJECT_NAME
+  IMAGE_TAG: $CI_COMMIT_SHORT_SHA
 
 
 unit-test:
@@ -39,3 +24,37 @@ unit-test:
     - source .venv/bin/activate
   script:
     - pytest chaos/test/unit
+
+build-docker-image:
+  stage: build
+  image: docker:latest
+  services:
+  - docker:20.10.16-dind
+
+  before_script:
+    # We need to create the folder /tmp because using the docker --ssh, the "~" characeter didn't work 
+    - mkdir /tmp/.ssh && ssh-keyscan gitlab.com >> /tmp/.ssh/known_hosts
+    - echo "$SSH_CHURN_ACCESS" > /tmp/.ssh/id_ed25519 && chmod 600 /tmp/.ssh/id_ed25519
+    - cat $GCP_SA_KEY | docker login -u _json_key --password-stdin https://$REGISTRY_HOST
+
+  # TODO : login to docker registry
+  script:
+    - DOCKER_BUILDKIT=1 docker build --ssh churn_ssh=/tmp/.ssh/id_ed25519 -t $IMAGE_NAME:$IMAGE_TAG .
+    - docker push $IMAGE_NAME:$IMAGE_TAG
+
+
+deployment-kubernetes:
+  stage: deployment
+  image: google/cloud-sdk
+    
+  before_script:
+    # Set gcloud credentials
+    - echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+    - curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+    - apt update
+    - apt-get -y install google-cloud-cli-gke-gcloud-auth-plugin
+    - export USE_GKE_GCLOUD_AUTH_PLUGIN=True
+    - gcloud auth activate-service-account --key-file=$GCP_SA_KEY --project=coyotta-2022
+    - gcloud container clusters get-credentials ml-prod-coyotta-2022-gke  --region=europe-west1-b
+  script:
+    - kubectl set image deployment/chaos-1-deployment churn-api=$IMAGE_NAME:$IMAGE_TAG
