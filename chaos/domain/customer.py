@@ -31,6 +31,8 @@ class Customer:
         self.marketing = marketing
         self.model = model
         if self.model is None:
+            logging.warning("No model specified from gcs"
+                            ", loading default model")
             self.model = ChurnModelFinal().load()
 
     def predict_subscription(self) -> float:
