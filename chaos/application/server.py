@@ -96,7 +96,15 @@ class Answer(BaseModel):
     answer: float
 
 
-CHURN_MODEL = load_churn_model()
+CHURN_MODEL_IS_LOADED = False
+CHURN_MODEL = None
+
+
+def get_global_churn_model():
+    """Return global variable churn model and load it if not loaded."""
+    if not CHURN_MODEL_IS_LOADED:
+        CHURN_MODEL = load_churn_model()
+    return CHURN_MODEL
 
 
 @app.post("/detect/", tags=["detect"])
@@ -108,7 +116,7 @@ def detect(customer_input: CustomerInput):
     customer_input : CustomerInput(BaseModel)
         Customer marketing characterics
     """
-    customer = Customer(customer_input.dict(), CHURN_MODEL)
+    customer = Customer(customer_input.dict(), get_global_churn_model())
     answer = customer.predict_subscription()
 
     return Answer(answer=answer)
