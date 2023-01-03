@@ -1,10 +1,43 @@
 """API definition for churn detection."""
+import logging
+import os
+import tempfile
 from fastapi import FastAPI
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel
 from chaos.domain.customer import Customer
-import pandas as pd
 from typing import Optional, Literal
 from datetime import datetime
+from google.cloud import storage
+import pickle
+from chaos.infrastructure.config.config import config
+
+
+def load_churn_model():
+    """Load churn model from GCS.
+
+    Returns
+    -------
+        ChurnModelFinal
+    """
+    bucket_name = config["gcs"]["bucket"]
+    source_blob_name = config["gcs"]["blob"]
+
+    logging.info("Loading model %s from GCS",
+                 bucket_name+"/"+source_blob_name)
+
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(source_blob_name)
+
+    model = None
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        destination_file_name = os.path.join(
+            tmpdirname, "ChurnModelFinal.pkl")
+        blob.download_to_filename(destination_file_name)
+        with open(destination_file_name, "rb") as model_pkl:
+            model = pickle.load(model_pkl)
+
+    return model
 
 
 class CustomerInput(BaseModel):
@@ -63,6 +96,9 @@ class Answer(BaseModel):
     answer: float
 
 
+CHURN_MODEL = load_churn_model()
+
+
 @app.post("/detect/", tags=["detect"])
 def detect(customer_input: CustomerInput):
     """Call Customer model churn detection.
@@ -72,8 +108,7 @@ def detect(customer_input: CustomerInput):
     customer_input : CustomerInput(BaseModel)
         Customer marketing characterics
     """
-
-    customer = Customer(customer_input.dict())
+    customer = Customer(customer_input.dict(), CHURN_MODEL)
     answer = customer.predict_subscription()
 
     return Answer(answer=answer)
