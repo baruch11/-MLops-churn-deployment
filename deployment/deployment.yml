@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chaos-1-deployment
+  labels:
+    environment: develop
+spec:
+  replicas: 2
+  selector:
+    matchLabels: 
+      app: chaos-1-deployment
+  template: 
+    metadata:
+      labels:
+        app: chaos-1-deployment
+    spec:
+      containers:
+        - name: churn-api
+          image: eu.gcr.io/coyotta-2022/chaos-1:develop
+          imagePullPolicy: Always

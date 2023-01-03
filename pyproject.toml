@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "chaos-1"
+version = "0.1.0"
+description = ""
+authors = ["Salima, Emeric, Charles"]
+readme = "README.md"
+packages = [{include = "chaos"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pytest = "^7.2.0"
+fastapi = {extras = ["all"], version = "^0.88.0"}
+sqlmodel = "^0.0.8"
+psycopg2-binary = "^2.9.5"
+scikit-learn = "^1.2.0"
+pandas = "^1.5.2"
+churn-sec = {git = "ssh://git@gitlab.com/yotta-academy/mle-bootcamp/projects/ml-project/project-1-fall-2022/churn-modelling-salima-charles-emeric.git", rev = "v3"}
+pytest-mock = "^3.10.0"
+coverage = "^7.0.0"
+pytest-cov = "^4.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
