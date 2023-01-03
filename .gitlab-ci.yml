@@ -10,7 +10,7 @@ variables:
   IMAGE_TAG: $CI_COMMIT_SHORT_SHA
 
 
-unit-test:
+.unit-test:
   image: python:3.9
   stage: test
   before_script:
@@ -25,6 +25,7 @@ unit-test:
   script:
     - pytest chaos/test/unit
     - echo $CI_MERGE_REQUEST_TARGET_BRANCH_NAME 
+    - echo $CI_PIPELINE_SOURCE
   rules:
     # We don't launch unit-tests if merging into main, all other cases are ok
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
@@ -32,7 +33,22 @@ unit-test:
     - when: on_success
 
 
-build-docker-image:
+unit-test:
+  image: python:3.9
+  stage: test
+  script:
+    - echo $CI_MERGE_REQUEST_TARGET_BRANCH_NAME 
+    - echo $CI_PIPELINE_SOURCE
+  rules:
+    # We don't launch unit-tests if merging into main, all other cases are ok
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
+      when: never 
+    - when: on_success
+
+
+
+
+.build-docker-image:
   stage: build
   image: docker:latest
   services:
@@ -52,8 +68,7 @@ build-docker-image:
     # Only build and push image if we are merging into develop. 
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
 
-
-deployment-kubernetes:
+.deployment-kubernetes:
   stage: deployment
   image: google/cloud-sdk
     
