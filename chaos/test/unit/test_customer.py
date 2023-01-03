@@ -31,7 +31,7 @@ class TestModel(object):
            "SALAIRE": 141035.65, "SCORE_CREDIT": 581.0,
            "DATE_ENTREE": "2015-01-01 00:00:00", "NOM": "Mazzi",
            "PAYS": "Allemagne", "SEXE": "F", "AGE": 43,
-           "MEMBRE_ACTIF": "No"}, 0.5)])
+           "MEMBRE_ACTIF": "No"}, True)])
     def test_model_prediction(self, marketing, expected):
         """ Here we provide an object corresponding to a customer, and we
                 verify that the prediction worked, and that the output is True.
@@ -39,7 +39,7 @@ class TestModel(object):
 
         customer = Customer(marketing)
         predict_proba_serie = customer.predict_subscription()
-        TestCase().assertTrue(predict_proba_serie.values[0] > expected)
+        TestCase().assertTrue((predict_proba_serie.values[0] > 0.5) == expected)
 
 
 class TestSocioEco(object):
