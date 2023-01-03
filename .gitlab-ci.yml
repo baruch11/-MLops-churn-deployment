@@ -24,6 +24,12 @@ unit-test:
     - source .venv/bin/activate
   script:
     - pytest chaos/test/unit
+  rules:
+    # We don't launch unit-tests if merging into main, all other cases are ok
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == main
+      when: never 
+    - when: on_success
+
 
 build-docker-image:
   stage: build
@@ -41,6 +47,9 @@ build-docker-image:
   script:
     - DOCKER_BUILDKIT=1 docker build --ssh churn_ssh=/tmp/.ssh/id_ed25519 -t $IMAGE_NAME:$IMAGE_TAG .
     - docker push $IMAGE_NAME:$IMAGE_TAG
+  rules :
+    # Only build and push image if we are merging into develop. 
+    - if : $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == develop
 
 
 deployment-kubernetes:
@@ -58,3 +67,6 @@ deployment-kubernetes:
     - gcloud container clusters get-credentials ml-prod-coyotta-2022-gke  --region=europe-west1-b
   script:
     - kubectl set image deployment/chaos-1-deployment churn-api=$IMAGE_NAME:$IMAGE_TAG
+  rules:
+    # Only deploy if the MR is comming from develop to main.
+  - if : $CI_COMMIT_BRANCH == develop && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == main
