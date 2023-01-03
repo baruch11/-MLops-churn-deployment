@@ -1,10 +1,19 @@
 """Customer model."""
+import logging
 import os
-from churn.domain.churn_model import ChurnModelFinal
+import tempfile
+import pickle
 import pandas as pd
+from google.cloud import storage
+import google.cloud.exceptions as ggexp
+from churn.domain.churn_model import ChurnModelFinal
+from chaos.infrastructure.config.config import config
 
 this_dir = os.path.dirname(os.path.realpath(__file__))
 
+
+class ModelNotFoundException(Exception):
+    """Model not found."""
 
 class Customer:
     """Class representing a bank customer."""
@@ -41,3 +50,35 @@ class Customer:
         """
         predict_proba = self.model.predict_proba(pd.DataFrame([self.marketing]))
         return predict_proba
+
+
+def load_churn_model():
+    """Load churn model from GCS.
+
+    Returns
+    -------
+        ChurnModelFinal
+    """
+    bucket_name = config["gcs"]["bucket"]
+    source_blob_name = config["gcs"]["blob"]
+
+    logging.info("Loading model %s from GCS",
+                 bucket_name+"/"+source_blob_name)
+
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(source_blob_name)
+
+    model = None
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        destination_file_name = os.path.join(
+            tmpdirname, "ChurnModelFinal.pkl")
+        try:
+            blob.download_to_filename(destination_file_name)
+            with open(destination_file_name, "rb") as model_pkl:
+                model = pickle.load(model_pkl)
+        except ggexp.NotFound:
+            logging.error("%s not found in %s", source_blob_name, bucket_name)
+            raise ModelNotFoundException
+
+    return model

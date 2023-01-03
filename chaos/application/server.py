@@ -1,43 +1,10 @@
 """API definition for churn detection."""
-import logging
-import os
-import tempfile
 from fastapi import FastAPI
 from pydantic import BaseModel
-from chaos.domain.customer import Customer
+from chaos.domain.customer import (Customer, load_churn_model,
+                                   ModelNotFoundException)
 from typing import Optional, Literal
 from datetime import datetime
-from google.cloud import storage
-import pickle
-from chaos.infrastructure.config.config import config
-
-
-def load_churn_model():
-    """Load churn model from GCS.
-
-    Returns
-    -------
-        ChurnModelFinal
-    """
-    bucket_name = config["gcs"]["bucket"]
-    source_blob_name = config["gcs"]["blob"]
-
-    logging.info("Loading model %s from GCS",
-                 bucket_name+"/"+source_blob_name)
-
-    storage_client = storage.Client()
-    bucket = storage_client.bucket(bucket_name)
-    blob = bucket.blob(source_blob_name)
-
-    model = None
-    with tempfile.TemporaryDirectory() as tmpdirname:
-        destination_file_name = os.path.join(
-            tmpdirname, "ChurnModelFinal.pkl")
-        blob.download_to_filename(destination_file_name)
-        with open(destination_file_name, "rb") as model_pkl:
-            model = pickle.load(model_pkl)
-
-    return model
 
 
 class CustomerInput(BaseModel):
@@ -96,6 +63,7 @@ class Answer(BaseModel):
     answer: float
 
 
+CHURN_MODEL_NOT_FOUND = -1
 CHURN_MODEL_IS_LOADED = False
 CHURN_MODEL = None
 
@@ -116,7 +84,11 @@ def detect(customer_input: CustomerInput):
     customer_input : CustomerInput(BaseModel)
         Customer marketing characterics
     """
-    customer = Customer(customer_input.dict(), get_global_churn_model())
+    try:
+        model = get_global_churn_model()
+    except ModelNotFoundException:
+        return Answer(answer=CHURN_MODEL_NOT_FOUND)
+    customer = Customer(customer_input.dict(), model)
     answer = customer.predict_subscription()
 
     return Answer(answer=answer)
