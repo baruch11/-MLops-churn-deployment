@@ -48,7 +48,7 @@ unit-test:
 
 
 
-build-docker-image:
+.build-docker-image:
   stage: build
   image: docker:latest
   services:
@@ -68,8 +68,7 @@ build-docker-image:
     # Only build and push image if we are merging into develop. 
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
 
-
-deployment-kubernetes:
+.deployment-kubernetes:
   stage: deployment
   image: google/cloud-sdk
     
