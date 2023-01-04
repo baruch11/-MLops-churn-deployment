@@ -3,7 +3,7 @@ from churn.domain.churn_model import ChurnModelFinal
 import pytest
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture()
 def mock_socio_eco(monkeypatch):
     def mock_connect(*args, **kwargs):
         return True
