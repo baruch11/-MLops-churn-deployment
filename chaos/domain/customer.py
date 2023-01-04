@@ -6,7 +6,6 @@ import pickle
 import pandas as pd
 from google.cloud import storage
 import google.cloud.exceptions as ggexp
-from churn.domain.churn_model import ChurnModelFinal
 from chaos.infrastructure.config.config import config
 
 this_dir = os.path.dirname(os.path.realpath(__file__))
@@ -31,9 +30,7 @@ class Customer:
         self.marketing = marketing
         self.model = model
         if self.model is None:
-            logging.warning("No model specified from gcs"
-                            ", loading default model")
-            self.model = ChurnModelFinal().load()
+            raise ModelNotFoundException
 
     def predict_subscription(self) -> float:
         """Return appetence score [0,1] of the customer predicted by the model.

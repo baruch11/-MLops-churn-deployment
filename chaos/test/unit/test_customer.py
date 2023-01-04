@@ -3,7 +3,7 @@ from chaos.domain.customer import Customer
 from interpret.glassbox.ebm.ebm import ExplainableBoostingClassifier
 from unittest import TestCase
 from chaos.infrastructure.socio_eco import SocioEco
-
+from churn.domain.churn_model import ChurnModelFinal
 
 # TODO : pydantic on data input and output format
 # TODO : monkeypatch on connect, setattr init.
@@ -20,7 +20,8 @@ class TestModel(object):
     def test_model_loading(self):
         """ Here we check if the Customer will load the ChurnModel, and if it's
         pipeline contain the ExplainableBoostingClassifier"""
-        customer = Customer(marketing={"A": 1})
+        customer = Customer(marketing={"A": 1},
+                            model=ChurnModelFinal.load())
         assert isinstance(
             customer.model.pipe.get_params()['classifier'],
             ExplainableBoostingClassifier)
@@ -37,7 +38,7 @@ class TestModel(object):
                 verify that the prediction worked, and that the output is True.
         """
 
-        customer = Customer(marketing)
+        customer = Customer(marketing, ChurnModelFinal.load())
         predict_proba_serie = customer.predict_subscription()
         TestCase().assertTrue((predict_proba_serie.values[0] > 0.5) == expected)
 

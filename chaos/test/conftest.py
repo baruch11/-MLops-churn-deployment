@@ -1,4 +1,5 @@
 from chaos.infrastructure.connexion import Connexion
+from churn.domain.churn_model import ChurnModelFinal
 import pytest
 
 
@@ -13,9 +14,7 @@ def mock_socio_eco(monkeypatch):
 def use_local_pkl(monkeypatch):
     """Remove requests.sessions.Session.request for all tests."""
     def _mock_load_model():
-        # explanation : the Customer __init__ method is expected to load
-        # a default model when it model argument is None
-        return None
+        return ChurnModelFinal().load()
 
     monkeypatch.setattr("chaos.application.server.load_churn_model",
                         _mock_load_model)
