@@ -42,11 +42,9 @@ class TestModel(object):
         TestCase().assertTrue((predict_proba_serie.values[0] > 0.5) == expected)
 
 
-class TestSocioEco(object):
-
-    def test_instantiate_socio_eco(mock_socio_eco):
+class TestSocioEco:
+    def test_instantiate_socio_eco(self, mock_socio_eco):
         """ We can init a SocioEco instance who need a connection, but we have
         # mocked it thanks to the function mock_socio_eco """
-
         socio_eco = SocioEco()
         assert isinstance(socio_eco, SocioEco)
