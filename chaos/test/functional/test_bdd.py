@@ -1,5 +1,5 @@
 from sqlalchemy.engine.base import Engine
-from chaos.infrastructure.connexion import Connexion
+from chaos.infrastructure.customer_loader import CustomerLoader
 import pandas as pd
 import datetime
 
@@ -19,36 +19,22 @@ expected_data = {"id_client": [15688172],
                  }
 
 
-class TestDatabase:
-    def test_to_connect(self):
-        connexion = Connexion().connect(sqlalchemy_engine=True)
+class TestCustomerLoader:
+
+    def test_instantiate_customer_loader(self):
+        customer_loader = CustomerLoader()
         assert isinstance(
-            connexion,
+            customer_loader.engine,
             Engine
         )
 
-    def test_select_customer(self):
-        query = "SELECT COUNT (*) FROM customer"
-        connexion = Connexion().connect(sqlalchemy_engine=True)
-        data = pd.read_sql(query, connexion)
-        assert data.values[0][0] == 9950
+    def test_load_all_customer_data(self):
+        customer_loader = CustomerLoader()
+        all_raw_data = customer_loader.load_all_customer_raw()
+        assert all_raw_data.shape == (9950, 13)
 
-    def test_select_indicators(self):
-        query = "SELECT COUNT (*) FROM indicators"
-        connexion = Connexion().connect(sqlalchemy_engine=True)
-        data = pd.read_sql(query, connexion)
-        assert data.values[0][0] == 9950
-
-    def test_select_join(self):
-
-        query = "SELECT customer.ID_CLIENT, DATE_ENTREE, NOM, PAYS, SEXE, AGE,\
-             MEMBRE_ACTIF, BALANCE, NB_PRODUITS, CARTE_CREDIT, \
-                SALAIRE, SCORE_CREDIT, CHURN\
-                FROM customer\
-                INNER JOIN indicators ON \
-                    customer.ID_CLIENT=indicators.ID_CLIENT;"
-        connexion = Connexion().connect(sqlalchemy_engine=True)
-        data = pd.read_sql(query, connexion)
-        line_15688172 = data.loc[data["id_client"] == 15688172]
+    def test_find_a_specific_customer(self):
+        customer_loader = CustomerLoader()
+        line_15688172 = customer_loader.find_a_customer(15688172)
         expected_df = pd.DataFrame(data=expected_data)
         assert expected_df.equals(line_15688172)
