@@ -2,9 +2,10 @@
 from fastapi import FastAPI
 from pydantic import BaseModel, ValidationError
 from chaos.domain.customer import Customer
+from chaos.infrastructure.customer_loader import CustomerLoader
 import pandas as pd
 from typing import Optional, Literal
-from datetime import datetime
+from datetime import datetime, date
 
 
 class CustomerInput(BaseModel):
@@ -47,6 +48,22 @@ class CustomerInput(BaseModel):
     MEMBRE_ACTIF: Literal["Yes", "No"] = None
 
 
+class BddCustomerOutput(BaseModel):
+    id_client: int
+    date_entree: date
+    nom: str
+    pays: str
+    sexe: str
+    age: int
+    membre_actif: str
+    balance: float
+    nb_produits: int
+    carte_credit: str
+    salaire: float
+    score_credit: float
+    churn: str
+
+
 app = FastAPI(
     title="Churn detection",
     openapi_tags=[{
@@ -63,6 +80,8 @@ class Answer(BaseModel):
     answer: float
 
 
+
+
 @app.post("/detect/", tags=["detect"])
 def detect(customer_input: CustomerInput):
     """Call Customer model churn detection.
@@ -77,3 +96,12 @@ def detect(customer_input: CustomerInput):
     answer = customer.predict_subscription()
 
     return Answer(answer=answer)
+
+
+@app.get("/customer/{customer_id}")
+def read_item(customer_id):
+    customer_loader = CustomerLoader()
+    df_prospect = customer_loader.find_a_customer(customer_id)
+    dict_prospect = df_prospect.to_dict(orient="records")[0]
+    bdd_customer_output = BddCustomerOutput(**dict_prospect)
+    return bdd_customer_output
