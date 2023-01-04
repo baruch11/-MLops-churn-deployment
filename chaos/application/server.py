@@ -1,8 +1,8 @@
 """API definition for churn detection."""
 from fastapi import FastAPI
-from pydantic import BaseModel, ValidationError
-from chaos.domain.customer import Customer
-import pandas as pd
+from pydantic import BaseModel
+from chaos.domain.customer import (Customer, load_churn_model,
+                                   ModelNotFoundException)
 from typing import Optional, Literal
 from datetime import datetime
 
@@ -63,6 +63,17 @@ class Answer(BaseModel):
     answer: float
 
 
+CHURN_MODEL_NOT_FOUND = -1
+CHURN_MODEL = None
+
+
+@app.on_event("startup")
+async def startup_event():
+    """Load model just once."""
+    global CHURN_MODEL
+    CHURN_MODEL = load_churn_model()
+
+
 @app.post("/detect/", tags=["detect"])
 def detect(customer_input: CustomerInput):
     """Call Customer model churn detection.
@@ -72,8 +83,11 @@ def detect(customer_input: CustomerInput):
     customer_input : CustomerInput(BaseModel)
         Customer marketing characterics
     """
-
-    customer = Customer(customer_input.dict())
+    try:
+        model = CHURN_MODEL
+    except ModelNotFoundException:
+        return Answer(answer=CHURN_MODEL_NOT_FOUND)
+    customer = Customer(customer_input.dict(), model)
     answer = customer.predict_subscription()
 
     return Answer(answer=answer)
