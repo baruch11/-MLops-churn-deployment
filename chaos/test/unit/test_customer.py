@@ -2,7 +2,7 @@ import pytest
 from chaos.domain.customer import Customer
 from interpret.glassbox.ebm.ebm import ExplainableBoostingClassifier
 from unittest import TestCase
-from chaos.infrastructure.socio_eco import SocioEco
+from chaos.infrastructure.customer_loader import CustomerLoader
 
 
 # TODO : pydantic on data input and output format
@@ -42,9 +42,9 @@ class TestModel(object):
         TestCase().assertTrue((predict_proba_serie.values[0] > 0.5) == expected)
 
 
-class TestSocioEco:
-    def test_instantiate_socio_eco(self, mock_socio_eco):
-        """ We can init a SocioEco instance who need a connection, but we have
-        # mocked it thanks to the function mock_socio_eco """
-        socio_eco = SocioEco()
-        assert isinstance(socio_eco, SocioEco)
+class TestCustomerLoader:
+    def test_customer_loader(self, mock_connexion):
+        """ We can init a CustomerLoader instance who need a connection, \
+            but we have mocked it thanks to the function mock_connect """
+        customer_loader = CustomerLoader()
+        assert isinstance(customer_loader, CustomerLoader)
