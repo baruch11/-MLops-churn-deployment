@@ -64,15 +64,14 @@ class Answer(BaseModel):
 
 
 CHURN_MODEL_NOT_FOUND = -1
-CHURN_MODEL_IS_LOADED = False
 CHURN_MODEL = None
 
 
-def get_global_churn_model():
-    """Return global variable churn model and load it if not loaded."""
-    if not CHURN_MODEL_IS_LOADED:
-        CHURN_MODEL = load_churn_model()
-    return CHURN_MODEL
+@app.on_event("startup")
+async def startup_event():
+    """Load model just once."""
+    global CHURN_MODEL
+    CHURN_MODEL = load_churn_model()
 
 
 @app.post("/detect/", tags=["detect"])
@@ -85,7 +84,7 @@ def detect(customer_input: CustomerInput):
         Customer marketing characterics
     """
     try:
-        model = get_global_churn_model()
+        model = CHURN_MODEL
     except ModelNotFoundException:
         return Answer(answer=CHURN_MODEL_NOT_FOUND)
     customer = Customer(customer_input.dict(), model)
