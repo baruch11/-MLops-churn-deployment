@@ -6,7 +6,7 @@ https://cloud.google.com/sql/docs/postgres/sql-proxy
 
 ### Command lines :
 
-1 - `proxy-start`
+1 - `make proxy-start`
 
 #### Open a new terminal :
 
@@ -18,7 +18,7 @@ https://cloud.google.com/sql/docs/postgres/sql-proxy
 
 #### To terminate running instance
 
-4 - `proxy-kill`
+4 - `make proxy-kill`
 
 
 
