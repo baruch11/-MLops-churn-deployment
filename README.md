@@ -13,6 +13,12 @@ Original code base for churn detection model is here : https://gitlab.com/yotta-
 	and kubernetes)
 - SSH_CHURN_ACCESS: private ssh key for churn model gitlab repo
 
+## PROXY
+
+help to connect to proxy
+
+[proxy commands](proxy/proxy_SQL_connexion.md)
+
 
 ## GCLOUD :
 help to work with gcloud.
