@@ -13,6 +13,13 @@ Original code base for churn detection model is here : https://gitlab.com/yotta-
 	and kubernetes)
 - SSH_CHURN_ACCESS: private ssh key for churn model gitlab repo
 
+
+## GCLOUD :
+help to work with gcloud.
+### Identify gcloud  storage locally :
+gcloud auth application-default login
+
+
 ## BDD
 ### How to work with psql commands. 
 psql commands are quite specifics : 
