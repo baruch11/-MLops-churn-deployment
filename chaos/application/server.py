@@ -3,8 +3,9 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from chaos.domain.customer import (Customer, load_churn_model,
                                    ModelNotFoundException)
+from chaos.infrastructure.customer_loader import CustomerLoader
 from typing import Optional, Literal
-from datetime import datetime
+from datetime import datetime, date
 
 
 class CustomerInput(BaseModel):
@@ -45,6 +46,22 @@ class CustomerInput(BaseModel):
     SEXE: Literal["H", "F"] = None
     AGE: int = None
     MEMBRE_ACTIF: Literal["Yes", "No"] = None
+
+
+class BddCustomerOutput(BaseModel):
+    id_client: int
+    date_entree: date
+    nom: str
+    pays: str
+    sexe: str
+    age: int
+    membre_actif: str
+    balance: float
+    nb_produits: int
+    carte_credit: str
+    salaire: float
+    score_credit: float
+    churn: str
 
 
 app = FastAPI(
@@ -91,3 +108,12 @@ def detect(customer_input: CustomerInput):
     answer = customer.predict_subscription()
 
     return Answer(answer=answer)
+
+
+@app.get("/customer/{customer_id}")
+def read_item(customer_id):
+    customer_loader = CustomerLoader()
+    df_prospect = customer_loader.find_a_customer(customer_id)
+    dict_prospect = df_prospect.to_dict(orient="records")[0]
+    bdd_customer_output = BddCustomerOutput(**dict_prospect)
+    return bdd_customer_output
