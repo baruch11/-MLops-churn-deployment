@@ -15,7 +15,7 @@ build-docker-image:
 		--ssh churn_ssh=$(SSH_PRIVATE_KEY) -t chaos-1 .
 
 proxy-start:
-	@proxy/cloud_sql_proxy -instances=$(INSTANCE_CONNECTION_NAME)=tcp:5432 \ 
+	@cloud_sql_proxy -instances=$(INSTANCE_CONNECTION_NAME)=tcp:5432 \ 
                   -credential_file=proxy/gcp_key.json &
 
 proxy-kill:

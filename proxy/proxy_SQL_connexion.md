@@ -2,7 +2,9 @@
 
 #### Download Cloud SQL Auth proxy according to your setup
 
-https://cloud.google.com/sql/docs/postgres/sql-proxy
+https://cloud.google.com/sql/docs/postgres/sql-proxy#install
+
+copy cloud_sql_proxy in a location in your $PATH (for e.g. ~/bin )
 
 ### Command lines :
 
