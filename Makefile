@@ -28,4 +28,7 @@ proxy-kill:
 		echo "Running SQL Proxy client has been killed"; \
 	fi
 
+postgres-connexion:
+	@psql "host=localhost port=5432 sslmode=disable dbname=churnapi \
+					 user=coyotta-2022-group-1"
 

@@ -12,11 +12,11 @@ copy cloud_sql_proxy in a location in your $PATH (for e.g. ~/bin )
 
 ##### Open a new terminal :
 
-2 - `psql "host=localhost port=5432 sslmode=disable dbname=postgres user=coyotta-2022-group-1"`
+2 - `make postgres-connexion`
 
 ##### To shut postgres
 
-3 - `exit`
+3 - `exit` or `\q`
 
 ##### To terminate running instance
 
