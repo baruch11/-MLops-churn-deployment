@@ -65,9 +65,11 @@ Do not forget to update your configuration files
 
 `config.yml` in sub folder `infrastructure/config`
 
-`gcs:
+```
+gcs:
   bucket: "chaos-1"
-  blob: "model/ChurnModelFinal.pkl"`
+  blob: "model/ChurnModelFinal.pkl"
+```
 
 ## BDD
 ### How to work with psql commands. 
