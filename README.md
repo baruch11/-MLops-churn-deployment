@@ -55,7 +55,7 @@ You will have 2 containers running, the churn api, and a postgres db on port 544
 If you are working with it for the first time, you need to upload datasets 1_-_customers.csv, and  1_-_indicators.csv into the bdd.
 #### Connect to postgres.
 First : Open a terminal, and connect to the postgres sql bdd using :
-- psql -h 127.0.0.1 -p 5442 -U postgres
+- `psql -h 127.0.0.1 -p 5442 -U postgres`
 (Default password will be postgres). The prompt will display `postgres=# `
 Then create a db called `churnapi`
 Press enter 5 times
