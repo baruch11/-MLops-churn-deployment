@@ -110,10 +110,35 @@ def detect(customer_input: CustomerInput):
     return Answer(answer=answer)
 
 
-@app.get("/customer/{customer_id}")
+@app.get("/customer/{customer_id}", tags=["read id"])
 def read_item(customer_id):
     customer_loader = CustomerLoader()
     df_prospect = customer_loader.find_a_customer(customer_id)
     dict_prospect = df_prospect.to_dict(orient="records")[0]
     bdd_customer_output = BddCustomerOutput(**dict_prospect)
     return bdd_customer_output
+
+@app.get("/customer_detect/{customer_id}", tags=["detect from id"])
+def detect_item(customer_id):
+    """Detect churn from customer id.
+
+    Parameters
+    ----------
+    customer_id : client ID
+
+    """
+    try:
+        model = CHURN_MODEL
+    except ModelNotFoundException:
+        return Answer(answer=CHURN_MODEL_NOT_FOUND)
+
+    customer_loader = CustomerLoader()
+    load_customer = customer_loader.customer_without_target(customer_id)
+    load_customer.columns = load_customer.columns.str.upper()
+
+    dict_customer = load_customer.to_dict(orient="records")[0]
+    customer = Customer(dict_customer, model)
+
+    answer = customer.predict_subscription()
+
+    return Answer(answer=answer)
