@@ -1,7 +1,7 @@
 # Chaos
 
 <p align="center">
-  <img src="images/churn.png" 
+    <img src="images/churn.png" 
         width="500" 
         height="250"  />
 </p>
@@ -30,8 +30,7 @@ make run-server
 ```
 Try the api at adress http://0.0.0.0:8000/docs
 
-
-## Docker image
+## Docker image 
 
 ### build
 ```
