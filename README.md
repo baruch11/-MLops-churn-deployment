@@ -3,6 +3,32 @@
 The current project is aim to deploy a churn detection machine learning model into production environment, using some cloud technologies such as Docker and Kubernetes.
 Original code base for churn detection model is here : https://gitlab.com/yotta-academy/mle-bootcamp/projects/ml-project/project-1-fall-2022/churn-modelling-salima-charles-emeric
 
+
+## Getting started
+
+### Install
+
+```
+poetry config --local virtualenvs.in-project true
+poetry install
+```
+
+### Run api locally
+
+```
+source .venv/bin/activate
+make run-server
+```
+Try the api at adress http://0.0.0.0:8000/docs
+
+
+## Docker image
+
+```
+export SSH_PRIVATE_KEY=<path_to_shh_key> # Gitlab ssh key needed to import churn repo
+make build-docker-image
+```
+
 ## CI/CD
 
 ### Gitlab variables
