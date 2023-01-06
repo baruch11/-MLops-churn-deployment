@@ -1,10 +1,10 @@
-# chaos
+# Chaos
 
-<img src="images/churn.png" 
-        alt="Chaos Project" 
+<p align="center">
+  <img src="images/churn.png" 
         width="500" 
-        height="250" 
-        style="display: block; margin: 0 auto" />
+        height="250"  />
+</p>
 
 > **The current project aims to deploy a churn detection machine learning model** into **production environment**, using some **cloud technologies** such as **Docker** and **Kubernetes**.
 >
