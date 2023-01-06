@@ -25,6 +25,13 @@ help to work with gcloud.
 ### Identify gcloud  storage locally :
 gcloud auth application-default login
 
+Do not forget to update your configuration files
+
+`config.yml` in sub folder `infrastructure/config`
+
+`gcs:
+  bucket: "chaos-1"
+  blob: "model/ChurnModelFinal.pkl"`
 
 ## BDD
 ### How to work with psql commands. 
@@ -41,9 +48,9 @@ In order to not affect production data, in local environments we will work with 
 We need to build and launch the containers, and to add data to it.
 #### Launch Docker compose.
 First launch the following  docker compose build command:
-- DOCKER_BUILDKIT=1 docker compose build --ssh churn_ssh=**your/path/to/ssh_churn_key**
+- `DOCKER_BUILDKIT=1 docker compose build --ssh churn_ssh=**your/path/to/ssh_churn_key**`
 Then start the containers using. 
-- docker compose up 
+- `docker compose up` 
 You will have 2 containers running, the churn api, and a postgres db on port 5442. 
 If you are working with it for the first time, you need to upload datasets 1_-_customers.csv, and  1_-_indicators.csv into the bdd.
 #### Connect to postgres.
@@ -53,12 +60,15 @@ First : Open a terminal, and connect to the postgres sql bdd using :
 Then create a db called `churnapi`
 Press enter 5 times
 Then create db :
-- CREATE DATABASE churnapi
+- `CREATE DATABASE churnapi;`
+
 #### Connect to churnapi database:
-- \c churnapi
+
+- `\c churnapi`
+
 #### Create a table name customer.
 
-CREATE TABLE customer (
+- `CREATE TABLE customer (
   ID_CLIENT SERIAL,
   DATE_ENTREE DATE,
   NOM VARCHAR(70),
@@ -67,15 +77,19 @@ CREATE TABLE customer (
   AGE SERIAL,
   MEMBRE_ACTIF VARCHAR(10),
   PRIMARY KEY (ID_CLIENT)
-);
+);`
+
 #### Append data from csv.
-- \COPY customer(ID_CLIENT, DATE_ENTREE, NOM, PAYS, SEXE, AGE, MEMBRE_ACTIF) FROM '**your/path/to/1_-_customers.csv**' DELIMITER ';' CSV HEADER;
+
+- `\COPY customer(ID_CLIENT, DATE_ENTREE, NOM, PAYS, SEXE, AGE, MEMBRE_ACTIF) FROM '**your/path/to/1_-_customers.csv**' DELIMITER ';' CSV HEADER;`
+
 #### Check your data.
-- SELECT * FROM customer;
+
+- `SELECT * FROM customer;`
 
 #### Create a table named indicators :
 
-CREATE TABLE indicators (
+- `CREATE TABLE indicators (
   ID_CLIENT SERIAL,
   BALANCE FLOAT,
   NB_PRODUITS INT,
@@ -84,9 +98,12 @@ CREATE TABLE indicators (
   SCORE_CREDIT FLOAT,
   CHURN VARCHAR(10),
   PRIMARY KEY (ID_CLIENT)
-);
+);`
+
 #### Append data from csv.
-\COPY indicators(ID_CLIENT, BALANCE, NB_PRODUITS, CARTE_CREDIT, SALAIRE, SCORE_CREDIT, CHURN) FROM '**your/path/to/1_-_indicators.csv**' DELIMITER ';' CSV HEADER;
+
+`\COPY indicators(ID_CLIENT, BALANCE, NB_PRODUITS, CARTE_CREDIT, SALAIRE, SCORE_CREDIT, CHURN) FROM '**your/path/to/1_-_indicators.csv**' DELIMITER ';' CSV HEADER;`
 
 #### Check your data.
-SELECT * FROM indicators;
+
+`SELECT * FROM indicators;`
