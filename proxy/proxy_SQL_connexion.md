@@ -2,7 +2,9 @@
 
 #### Download Cloud SQL Auth proxy according to your setup
 
-https://cloud.google.com/sql/docs/postgres/sql-proxy
+https://cloud.google.com/sql/docs/postgres/sql-proxy#install
+
+copy cloud_sql_proxy in a location in your $PATH (for e.g. ~/bin )
 
 ### Command lines :
 
@@ -10,11 +12,11 @@ https://cloud.google.com/sql/docs/postgres/sql-proxy
 
 ##### Open a new terminal :
 
-2 - `psql "host=localhost port=5432 sslmode=disable dbname=postgres user=coyotta-2022-group-1"`
+2 - `make postgres-connexion`
 
 ##### To shut postgres
 
-3 - `exit`
+3 - `exit` or `\q`
 
 ##### To terminate running instance
 
