@@ -63,7 +63,7 @@ help to work with gcloud.
 gcloud auth application-default login
 ```
 
-##### 🚩Do not forget to update your configuration files
+🚩 **Do not forget to update your configuration files** 🚩
 
 `config.yml` in sub folder `infrastructure/config`
 
