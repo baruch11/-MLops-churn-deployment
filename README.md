@@ -102,8 +102,8 @@ Then create db :
 
 #### Append data from csv.
 
-`\COPY indicators(ID_CLIENT, BALANCE, NB_PRODUITS, CARTE_CREDIT, SALAIRE, SCORE_CREDIT, CHURN) FROM '**your/path/to/1_-_indicators.csv**' DELIMITER ';' CSV HEADER;`
+- `\COPY indicators(ID_CLIENT, BALANCE, NB_PRODUITS, CARTE_CREDIT, SALAIRE, SCORE_CREDIT, CHURN) FROM '**your/path/to/1_-_indicators.csv**' DELIMITER ';' CSV HEADER;`
 
 #### Check your data.
 
-`SELECT * FROM indicators;`
+- `SELECT * FROM indicators;`
