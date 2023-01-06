@@ -59,9 +59,11 @@ help to connect to proxy
 ## GCLOUD :
 help to work with gcloud.
 ### Identify gcloud  storage locally :
+```
 gcloud auth application-default login
+```
 
-Do not forget to update your configuration files
+###### 🚩Do not forget to update your configuration files
 
 `config.yml` in sub folder `infrastructure/config`
 
