@@ -30,14 +30,4 @@ class CustomerLoader:
                     customer.ID_CLIENT=indicators.ID_CLIENT;"
         data = pd.read_sql(query, self.engine)
         return data
-
-    def customer_without_target(self, customer_id):
-        query = f"SELECT customer.ID_CLIENT, BALANCE, NB_PRODUITS, CARTE_CREDIT, \
-                SALAIRE, SCORE_CREDIT, DATE_ENTREE, PAYS, SEXE, AGE, MEMBRE_ACTIF \
-                    FROM customer \
-                    INNER JOIN indicators ON \
-                        customer.ID_CLIENT=indicators.ID_CLIENT\
-                            WHERE customer.ID_CLIENT = {customer_id};"
-
-        raw_customer = pd.read_sql(query, self.engine)
-        return raw_customer
+        

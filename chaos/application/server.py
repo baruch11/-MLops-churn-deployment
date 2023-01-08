@@ -133,7 +133,8 @@ def detect_item(customer_id):
         return Answer(answer=CHURN_MODEL_NOT_FOUND)
 
     customer_loader = CustomerLoader()
-    load_customer = customer_loader.customer_without_target(customer_id)
+    load_customer = customer_loader.find_a_customer(customer_id)
+    load_customer.drop(columns=['churn'])
     load_customer.columns = load_customer.columns.str.upper()
 
     dict_customer = load_customer.to_dict(orient="records")[0]
