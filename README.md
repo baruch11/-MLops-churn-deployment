@@ -24,9 +24,19 @@ Try the api at adress http://0.0.0.0:8000/docs
 
 ## Docker image
 
+### build
 ```
 export SSH_PRIVATE_KEY=<path_to_shh_key> # Gitlab ssh key needed to import churn repo
 make build-docker-image
+```
+the tag of the image will be the short git sha1
+
+### run image
+
+Make sure your **GOOGLE_APPLICATION_CREDENTIALS** is set before runing image.
+```
+export GOOGLE_APPLICATION_CREDENTIALS=<path to json of the service account private key>
+make run-docker-image
 ```
 
 ## CI/CD

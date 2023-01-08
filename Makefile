@@ -16,6 +16,14 @@ build-docker-image:
 	DOCKER_BUILDKIT=1 docker build --platform linux/amd64 \
 		--ssh churn_ssh=$(SSH_PRIVATE_KEY) -t chaos-1:$(SHORT_SHA) .
 
+run-docker-image:
+	docker run -p 8000:8000 -e PORT=8000 -e K_SERVICE=dev \
+	-e K_CONFIGURATION=dev -e K_REVISION=dev-00001 \
+	-e GOOGLE_APPLICATION_CREDENTIALS=/tmp/keys/gcp_key.json \
+	-v $(GOOGLE_APPLICATION_CREDENTIALS):/tmp/keys/gcp_key.json:ro \
+	chaos-1:$(SHORT_SHA)
+
+
 proxy-start:
 	cloud_sql_proxy -instances=$(INSTANCE_CONNECTION_NAME)=tcp:5432
 
