@@ -3,19 +3,19 @@ from chaos.infrastructure.customer_loader import CustomerLoader
 import pandas as pd
 import datetime
 
-expected_data = {"id_client": [15688172],
-                 "date_entree": [datetime.date(2015, 6, 1)],
-                 "nom": ["Tai"],
-                 "pays": ["Espagne"],
-                 "sexe": ["H"],
-                 "age": [40],
-                 "membre_actif": ["No"],
-                 "balance": [0.0],
-                 "nb_produits": [2],
-                 "carte_credit": ["Yes"],
-                 "salaire": [88947.56],
-                 "score_credit": [677.0],
-                 "churn": ["No"]
+expected_data = {"ID_CLIENT": [15688172],
+                 "DATE_ENTREE": [datetime.date(2015, 6, 1)],
+                 "NOM": ["Tai"],
+                 "PAYS": ["Espagne"],
+                 "SEXE": ["H"],
+                 "AGE": [40],
+                 "MEMBRE_ACTIF": ["No"],
+                 "BALANCE": [0.0],
+                 "NB_PRODUITS": [2],
+                 "CARTE_CREDIT": ["Yes"],
+                 "SALAIRE": [88947.56],
+                 "SCORE_CREDIT": [677.0],
+                 "CHURN": ["No"]
                  }
 
 
