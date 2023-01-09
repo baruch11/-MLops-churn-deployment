@@ -7,17 +7,18 @@ services:
       - db-data:/var/lib/postgresql/data
     ports:
       - "5442:5432"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=fastapi
 
   api:
     build: .
+    image: "eu.gcr.io/coyotta-2022/chaos-1:$SHORT_SHA"
     environment:
-      DATABASE_URL: "postgresql://postgres:postgres@db/fastapi"
+      - GOOGLE_APPLICATION_CREDENTIALS=/usr/app/proxy/gcp_key.json
+      - PYTHONPATH=/usr/app/
+    volumes:
+      - ./chaos/infrastructure/config/config.yml:/usr/app/chaos/infrastructure/config/config.yml
+      - ./proxy/gcp_key.json:/usr/app/proxy/gcp_key.json
     ports:
-      - "5000:8000"
+      - "8000:8000"
     depends_on:
       - db
 
