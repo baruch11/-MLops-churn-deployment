@@ -31,21 +31,35 @@ make run-server
 Try the api at adress http://0.0.0.0:8000/docs
 
 ## Docker image 
+If you want to containerize locally your code and run it you can do the following :
 
-### build
-```
-export SSH_PRIVATE_KEY=<path_to_shh_key> # Gitlab ssh key needed to import churn repo
-make build-docker-image
-```
-the tag of the image will be the short git sha1
-
-### run image
-
+### build and run :
 Make sure your **GOOGLE_APPLICATION_CREDENTIALS** is set before runing image.
 ```
 export GOOGLE_APPLICATION_CREDENTIALS=<path to json of the service account private key>
-make run-docker-image
+export SSH_PRIVATE_KEY=<path_to_shh_key> # Gitlab ssh key needed to import churn repo
+make containerize-and-start-app
 ```
+This command will build an image of your application, the tag of the image will be the short git sha1. It will create a local postgres sql bdd and the app will request on it. **Don't forget to add the csv data if this is the first time**
+
+### run all tests:
+The following command will enable you to build all the required environment to run unit tests, and functional tests.
+Functional tests are very important because they enable you to try your application working on real elements. (Real bdd, real model etc)
+In order to preserve production bdd performance, we build a local database (Postgres SQL) with docker. So don't forget to add the csv data!!. 
+```
+export GOOGLE_APPLICATION_CREDENTIALS=<path to json of the service account private key>
+export SSH_PRIVATE_KEY=<path_to_shh_key> # Gitlab ssh key needed to import churn repo
+make containerize-and-run-tests
+```
+
+### Push your image in google container registry:
+If you want to push your generated image directly to Google Container Registry without working with CI-CD, this is possible. 
+Simply do :
+```
+export SHORT_SHA=$(git rev-parse --short=8 HEAD)
+docker push eu.gcr.io/coyotta-2022/chaos-1:$SHORT_SHA
+```
+
 
 ## Kubernetes
 
