@@ -22,3 +22,4 @@ class TestServer(object):
             perf_api = f1_score(y_test, y_pred)
             print(f"F1 score {perf_api}")
             assert perf_api > EXPECTED_F1_SCORE
+
