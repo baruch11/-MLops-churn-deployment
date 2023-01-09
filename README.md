@@ -51,7 +51,13 @@ export GOOGLE_APPLICATION_CREDENTIALS=<path to json of the service account priva
 export SSH_PRIVATE_KEY=<path_to_shh_key> # Gitlab ssh key needed to import churn repo
 make containerize-and-run-tests
 ```
-
+### Build the app:
+Exactly the same than build and run, but it don't run. 
+```
+export GOOGLE_APPLICATION_CREDENTIALS=<path to json of the service account private key>
+export SSH_PRIVATE_KEY=<path_to_shh_key> # Gitlab ssh key needed to import churn repo
+make build-docker-image
+```
 ### Push your image in google container registry:
 If you want to push your generated image directly to Google Container Registry without working with CI-CD, this is possible. 
 Simply do :
