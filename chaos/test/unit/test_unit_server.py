@@ -2,6 +2,7 @@ from churn.domain.domain_utils import get_test_set
 from chaos.application.server import app
 from fastapi.testclient import TestClient
 from sklearn.metrics import f1_score
+import json
 
 
 class TestServer(object):
@@ -22,3 +23,12 @@ class TestServer(object):
             perf_api = f1_score(y_test, y_pred)
             print(f"F1 score {perf_api}")
             assert perf_api > EXPECTED_F1_SCORE
+    
+    def test_predict_from_id(self):
+        with TestClient(app) as client: 
+            response = client.get("/customer_detect/15791700")
+            assert response.status_code == 200 
+            assert response.json()["answer"] == 0.9769012533043302
+
+        
+
