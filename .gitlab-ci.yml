@@ -14,7 +14,7 @@ functional-test:
   image: docker/compose 
   stage: functional-tests
   variables:
-    GOOGLE_APPLICATION_CREDENTIALS: proxy/gcp_key.json
+    GOOGLE_APPLICATION_CREDENTIALS: ./proxy/gcp_key.json
     SHORT_SHA: 0b94cf5c
 
   before_script:
