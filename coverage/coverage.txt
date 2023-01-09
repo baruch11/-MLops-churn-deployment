@@ -1,32 +1,32 @@
-============================= test session starts ==============================
-platform linux -- Python 3.9.12, pytest-7.2.0, pluggy-1.0.0
-rootdir: /home/ubuntu/PythonProject/Projet3/chaos-1
-plugins: cov-4.0.0, mock-3.10.0, anyio-3.6.2, dash-2.7.1
-collected 7 items
+============================================================================== test session starts ==============================================================================
+platform darwin -- Python 3.9.12, pytest-7.2.0, pluggy-1.0.0
+rootdir: /Users/charlesprat/RepoGit/yotta, configfile: pytest.ini
+plugins: dash-2.7.1, mock-3.10.0, cov-4.0.0, anyio-3.6.2
+collected 6 items
 
-chaos/test/unit/test_customer.py ...                                     [ 42%]
-chaos/test/unit/test_hello_world.py ..                                   [ 71%]
-chaos/test/unit/test_unit_server.py ..                                   [100%]
+chaos/test/unit/test_customer.py ...                                                                                                                                      [ 50%]
+chaos/test/unit/test_hello_world.py ..                                                                                                                                    [ 83%]
+chaos/test/unit/test_unit_server.py .                                                                                                                                     [100%]
 
----------- coverage: platform linux, python 3.9.12-final-0 -----------
+---------- coverage: platform darwin, python 3.9.12-final-0 ----------
 Name                                             Stmts   Miss  Cover
 --------------------------------------------------------------------
 chaos/application/__init__.py                        0      0   100%
-chaos/application/server.py                         25      0   100%
+chaos/application/server.py                         55      7    87%
 chaos/application/train_model_for_appetence.py      21     21     0%
 chaos/domain/__init__.py                             0      0   100%
-chaos/domain/customer.py                            11      0   100%
+chaos/domain/customer.py                            37     18    51%
 chaos/infrastructure/__init__.py                     0      0   100%
 chaos/infrastructure/config/config.py               10      1    90%
 chaos/infrastructure/connexion.py                   23      7    70%
-chaos/infrastructure/socio_eco.py                   10      3    70%
-chaos/test/conftest.py                               7      0   100%
-chaos/test/unit/test_customer.py                    20      1    95%
+chaos/infrastructure/customer_loader.py             13      6    54%
+chaos/test/conftest.py                              13      0   100%
+chaos/test/unit/test_customer.py                    21      1    95%
 chaos/test/unit/test_hello_world.py                  7      0   100%
-chaos/test/unit/test_unit_server.py                 25      0   100%
+chaos/test/unit/test_unit_server.py                 18      0   100%
 --------------------------------------------------------------------
-TOTAL                                              159     33    79%
+TOTAL                                              218     61    72%
 Coverage HTML written to dir coverage/htmlcov
 
 
-============================== 7 passed in 54.30s ==============================
+=============================================================================== 6 passed in 7.29s ===============================================================================
