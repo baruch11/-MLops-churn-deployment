@@ -2,6 +2,7 @@
 stages:
   - test
   - build
+  - functional-tests
   - deployment
 
 variables:
@@ -9,15 +10,27 @@ variables:
   IMAGE_NAME: $REGISTRY_HOST/coyotta-2022/$CI_PROJECT_NAME
   IMAGE_TAG: $CI_COMMIT_SHORT_SHA
 
+functional-test:
+  image: docker/compose:1.28.5
+  stage: functional-tests
+  variables:
+    GOOGLE_APPLICATION_CREDENTIALS: proxy/gcp_key.json
+    SHORT_SHA: $CI_COMMIT_SHORT_SHA
 
-unit-test:
+  before_script:
+    - echo "$CONFIG_YML" > chaos/infrastructure/config/config.yml
+    - cat $GCP_SA_KEY > proxy/gcp_key.json
+  script:
+    - docker compose up -f docker-compose.CI.yml
+
+.unit-test:
   image: python:3.9
   stage: test
   before_script:
     - mkdir ~/.ssh && ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
     - echo "$SSH_CHURN_ACCESS" > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
-    - echo "$CONFIG_YML" > chaos/infrastructure/config/config_template.yml
-    - export YOTTA_ML3_CONFIGURATION_PATH=$(pwd)/chaos/infrastructure/config/config_template.yml
+    - echo "$CONFIG_YML" > chaos/infrastructure/config/config.yml
+    - export YOTTA_ML3_CONFIGURATION_PATH=$(pwd)/chaos/infrastructure/config/config.yml
     - pip install poetry
     - poetry config virtualenvs.in-project true --local
     - poetry install
@@ -35,7 +48,7 @@ unit-test:
 
 
 
-build-docker-image:
+.build-docker-image:
   stage: build
   image: docker:latest
   services:
@@ -55,7 +68,7 @@ build-docker-image:
     # Only build and push image if we are merging into develop. 
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
 
-deployment-kubernetes:
+.deployment-kubernetes:
   stage: deployment
   image: google/cloud-sdk
     
