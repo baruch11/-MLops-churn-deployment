@@ -13,15 +13,19 @@ run-server:
 	uvicorn chaos.application.server:app --host "0.0.0.0" --port 8000
 
 build-docker-image:
-	DOCKER_BUILDKIT=1 docker build --platform linux/amd64 \
-		--ssh churn_ssh=$(SSH_PRIVATE_KEY) -t eu.gcr.io/coyotta-2022/chaos-1:$(SHORT_SHA) .
+	export SHORT_SHA=$(SHORT_SHA); \
+	DOCKER_BUILDKIT=1 docker compose build --ssh churn_ssh=$(SSH_PRIVATE_KEY)
 
-run-docker-image:
-	docker run -p 8000:8000 -e PORT=8000 -e K_SERVICE=dev \
-	-e K_CONFIGURATION=dev -e K_REVISION=dev-00001 \
-	-e GOOGLE_APPLICATION_CREDENTIALS=/tmp/keys/gcp_key.json \
-	-v $(GOOGLE_APPLICATION_CREDENTIALS):/tmp/keys/gcp_key.json:ro \
-	chaos-1:$(SHORT_SHA)
+containerize-and-start-app : ## We are exporting the SHORT_SHA to use it in the compose file. 
+	export SHORT_SHA=$(SHORT_SHA); \
+	DOCKER_BUILDKIT=1 docker compose build --ssh churn_ssh=$(SSH_PRIVATE_KEY); \
+	docker compose up
+
+containerize-and-run-tests:
+	export SHORT_SHA=$(SHORT_SHA); \
+	DOCKER_BUILDKIT=1 docker compose build --ssh churn_ssh=$(SSH_PRIVATE_KEY); \
+	docker compose run api pytest chaos/test/
+	docker compose down
 
 
 proxy-start:
