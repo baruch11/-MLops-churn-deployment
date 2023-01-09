@@ -3,7 +3,7 @@ UNIT_TEST_DIR := chaos/test/unit
 COV_REPORT_TXT := coverage/coverage.txt
 COV_CONFIG_FILE_LOC := coverage/.coveragerc
 INSTANCE_CONNECTION_NAME := coyotta-2022:europe-west1:ml-prod-coyotta-2022-group-1-sql-16760197
-SHORT_SHA := $(shell git rev-parse --short HEAD)
+SHORT_SHA := $(shell git rev-parse --short=8 HEAD)
 
 
 coverage-unit:
@@ -14,7 +14,7 @@ run-server:
 
 build-docker-image:
 	DOCKER_BUILDKIT=1 docker build --platform linux/amd64 \
-		--ssh churn_ssh=$(SSH_PRIVATE_KEY) -t chaos-1:$(SHORT_SHA) .
+		--ssh churn_ssh=$(SSH_PRIVATE_KEY) -t eu.gcr.io/coyotta-2022/chaos-1:$(SHORT_SHA) .
 
 run-docker-image:
 	docker run -p 8000:8000 -e PORT=8000 -e K_SERVICE=dev \
