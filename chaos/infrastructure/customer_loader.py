@@ -28,3 +28,20 @@ class CustomerLoader:
                     customer.ID_CLIENT=indicators.ID_CLIENT;"
         data = pd.read_sql(query, self.engine)
         return data
+    
+    def does_the_ID_exist(self, customer_id):
+        query = f"SELECT CASE \
+             WHEN EXISTS(SELECT ID_CLIENT FROM customer WHERE ID_CLIENT = {customer_id}) \
+                        THEN  'Client ID exists'\
+                        ELSE  'Client ID does not exist' \
+                        END AS result;"
+        result_= pd.read_sql(query, self.engine)
+        return result_ 
+
+#c = CustomerLoader()
+#cc = c.does_the_ID_exist(15791700)
+#cc=cc['result'].values.tolist()[0]
+#if cc == "Client ID exists":
+#    print(True)
+#else:
+#    print(False)
