@@ -47,6 +47,14 @@ export GOOGLE_APPLICATION_CREDENTIALS=<path to json of the service account priva
 make run-docker-image
 ```
 
+## Kubernetes
+
+### create secret
+
+```
+kubectl create secret generic chaos-secrets-1 --from-file=key.json=<path to json of the service account private key> --from-file=<path to the config.yml>
+```
+
 ## CI/CD
 
 ### Gitlab variables
