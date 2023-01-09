@@ -21,6 +21,8 @@ functional-test:
     - echo "$CONFIG_YML" > chaos/infrastructure/config/config.yml
     - cat $GCP_SA_KEY > proxy/gcp_key.json
   script:
+    - echo "$GOOGLE_APPLICATION_CREDENTIALS"
+    - echo "$SHORT_SHA"
     - docker-compose -f docker-compose.CI.yml up
 
 .unit-test:
