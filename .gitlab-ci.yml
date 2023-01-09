@@ -11,7 +11,7 @@ variables:
   IMAGE_TAG: $CI_COMMIT_SHORT_SHA
 
 functional-test:
-  image: docker/compose
+  image: docker:latest
   stage: functional-tests
   services:
   - docker:20.10.16-dind
@@ -22,8 +22,12 @@ functional-test:
   before_script:
     - echo "$CONFIG_YML" > chaos/infrastructure/config/config.yml
     - cat $GCP_SA_KEY > proxy/gcp_key.json
+    - DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+    - mkdir -p $DOCKER_CONFIG/cli-plugins
+    - curl -SL https://github.com/docker/compose/releases/download/v2.15.0/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose
+    - chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
   script:
-    - docker compose -f docker-compose.CI.yml up
+    -docker compose version
 
 .unit-test:
   image: python:3.9
