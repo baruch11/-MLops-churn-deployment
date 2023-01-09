@@ -10,8 +10,10 @@ services:
 
   api:
     build: .
+    image: "eu.gcr.io/coyotta-2022/chaos-1:$SHORT_SHA"
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/usr/app/proxy/gcp_key.json
+      - PYTHONPATH=/usr/app/
     volumes:
       - ./chaos/infrastructure/config/config.yml:/usr/app/chaos/infrastructure/config/config.yml
       - ./proxy/gcp_key.json:/usr/app/proxy/gcp_key.json
