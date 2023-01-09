@@ -1,5 +1,4 @@
 import pandas as pd
-
 from chaos.infrastructure.connexion import Connexion
 
 
@@ -17,6 +16,7 @@ class CustomerLoader:
                     customer.ID_CLIENT=indicators.ID_CLIENT\
                 WHERE customer.ID_CLIENT = {customer_id};"
         raw_customer = pd.read_sql(query, self.engine)
+        raw_customer.columns = raw_customer.columns.str.upper()
         return raw_customer
 
     def load_all_customer_raw(self):

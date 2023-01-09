@@ -1,7 +1,16 @@
-# chaos
+# Chaos
 
-The current project is aim to deploy a churn detection machine learning model into production environment, using some cloud technologies such as Docker and Kubernetes.
-Original code base for churn detection model is here : https://gitlab.com/yotta-academy/mle-bootcamp/projects/ml-project/project-1-fall-2022/churn-modelling-salima-charles-emeric
+<p align="center">
+    <img src="images/churn.png" 
+        width="500" 
+        height="250"  />
+</p>
+
+> **The current project aims to deploy a churn detection machine learning model** into **production environment**, using some **cloud technologies** such as **Docker** and **Kubernetes**.
+>
+> **Original code base for churn detection model is here** :
+>
+> https://gitlab.com/yotta-academy/mle-bootcamp/projects/ml-project/project-1-fall-2022/churn-modelling-salima-charles-emeric
 
 
 ## Getting started
@@ -21,8 +30,7 @@ make run-server
 ```
 Try the api at adress http://0.0.0.0:8000/docs
 
-
-## Docker image
+## Docker image 
 
 ### build
 ```
@@ -59,19 +67,23 @@ help to connect to proxy
 ## GCLOUD :
 help to work with gcloud.
 ### Identify gcloud  storage locally :
+```
 gcloud auth application-default login
+```
 
-Do not forget to update your configuration files
+🚩 **Do not forget to update your configuration files** 🚩
 
 `config.yml` in sub folder `infrastructure/config`
 
-`gcs:
+```
+gcs:
   bucket: "chaos-1"
-  blob: "model/ChurnModelFinal.pkl"`
+  blob: "model/ChurnModelFinal.pkl"
+```
 
 ## BDD
 ### How to work with psql commands. 
-psql commands are quite specifics : 
+**psql commands are quite specifics** : 
 #### Get help.
 - `\?`
 #### List databases.
@@ -103,8 +115,8 @@ Then create db :
 - `\c churnapi`
 
 #### Create a table name customer.
-
-- `CREATE TABLE customer (
+```
+CREATE TABLE customer (
   ID_CLIENT SERIAL,
   DATE_ENTREE DATE,
   NOM VARCHAR(70),
@@ -113,19 +125,21 @@ Then create db :
   AGE SERIAL,
   MEMBRE_ACTIF VARCHAR(10),
   PRIMARY KEY (ID_CLIENT)
-);`
-
+);
+```
 #### Append data from csv.
 
-- `\COPY customer(ID_CLIENT, DATE_ENTREE, NOM, PAYS, SEXE, AGE, MEMBRE_ACTIF) FROM '**your/path/to/1_-_customers.csv**' DELIMITER ';' CSV HEADER;`
+```
+\COPY customer(ID_CLIENT, DATE_ENTREE, NOM, PAYS, SEXE, AGE, MEMBRE_ACTIF) FROM '**your/path/to/1_-_customers.csv**' DELIMITER ';' CSV HEADER;
+```
 
 #### Check your data.
-
-- `SELECT * FROM customer;`
-
+```
+SELECT * FROM customer;
+```
 #### Create a table named indicators :
-
-- `CREATE TABLE indicators (
+```
+CREATE TABLE indicators (
   ID_CLIENT SERIAL,
   BALANCE FLOAT,
   NB_PRODUITS INT,
@@ -134,12 +148,16 @@ Then create db :
   SCORE_CREDIT FLOAT,
   CHURN VARCHAR(10),
   PRIMARY KEY (ID_CLIENT)
-);`
+);
+```
 
 #### Append data from csv.
 
-- `\COPY indicators(ID_CLIENT, BALANCE, NB_PRODUITS, CARTE_CREDIT, SALAIRE, SCORE_CREDIT, CHURN) FROM '**your/path/to/1_-_indicators.csv**' DELIMITER ';' CSV HEADER;`
+```
+\COPY indicators(ID_CLIENT, BALANCE, NB_PRODUITS, CARTE_CREDIT, SALAIRE, SCORE_CREDIT, CHURN) FROM '**your/path/to/1_-_indicators.csv**' DELIMITER ';' CSV HEADER;
+```
 
 #### Check your data.
-
-- `SELECT * FROM indicators;`
+```
+SELECT * FROM indicators;
+```

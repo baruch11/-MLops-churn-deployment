@@ -49,19 +49,19 @@ class CustomerInput(BaseModel):
 
 
 class BddCustomerOutput(BaseModel):
-    id_client: int
-    date_entree: date
-    nom: str
-    pays: str
-    sexe: str
-    age: int
-    membre_actif: str
-    balance: float
-    nb_produits: int
-    carte_credit: str
-    salaire: float
-    score_credit: float
-    churn: str
+    ID_CLIENT: int
+    DATE_ENTREE: date
+    NOM: str
+    PAYS: str
+    SEXE: str
+    AGE: int
+    MEMBRE_ACTIF: str
+    BALANCE: float
+    NB_PRODUITS: int
+    CARTE_CREDIT: str
+    SALAIRE: float
+    SCORE_CREDIT: float
+    CHURN: str
 
 
 app = FastAPI(
@@ -110,10 +110,34 @@ def detect(customer_input: CustomerInput):
     return Answer(answer=answer)
 
 
-@app.get("/customer/{customer_id}")
+@app.get("/customer/{customer_id}", tags=["read id"])
 def read_item(customer_id):
     customer_loader = CustomerLoader()
     df_prospect = customer_loader.find_a_customer(customer_id)
     dict_prospect = df_prospect.to_dict(orient="records")[0]
     bdd_customer_output = BddCustomerOutput(**dict_prospect)
     return bdd_customer_output
+
+@app.get("/customer_detect/{customer_id}", tags=["detect from id"])
+def detect_item(customer_id):
+    """Detect churn from customer id.
+
+    Parameters
+    ----------
+    customer_id : client ID
+
+    """
+    try:
+        model = CHURN_MODEL
+    except ModelNotFoundException:
+        return Answer(answer=CHURN_MODEL_NOT_FOUND)
+    customer_loader = CustomerLoader()
+    load_customer = customer_loader.find_a_customer(customer_id)
+    load_customer.drop(columns=['CHURN'])
+    dict_customer = load_customer.to_dict(orient="records")[0]
+    customer = Customer(dict_customer, model)
+
+    answer = customer.predict_subscription()
+
+    return Answer(answer=answer)
+
