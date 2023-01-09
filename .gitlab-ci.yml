@@ -15,12 +15,11 @@ functional-test:
   stage: functional-tests
   variables:
     GOOGLE_APPLICATION_CREDENTIALS: proxy/gcp_key.json
-    SHORT_SHA: $CI_COMMIT_SHORT_SHA
+    SHORT_SHA: 0b94cf5c
 
   before_script:
     - echo "$CONFIG_YML" > chaos/infrastructure/config/config.yml
     - cat $GCP_SA_KEY > proxy/gcp_key.json
-    - cat proxy/gcp_key.json
   script:
     - docker-compose -f docker-compose.CI.yml up
 
