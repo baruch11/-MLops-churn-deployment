@@ -33,7 +33,7 @@ Try the api at adress http://0.0.0.0:8000/docs
 ## Docker image 
 If you want to containerize locally your code and run it you can do the following :
 
-### build and run :
+### build and run:
 Make sure your **GOOGLE_APPLICATION_CREDENTIALS** is set before runing image.
 ```
 export GOOGLE_APPLICATION_CREDENTIALS=<path to json of the service account private key>
@@ -50,6 +50,13 @@ In order to preserve production bdd performance, we build a local database (Post
 export GOOGLE_APPLICATION_CREDENTIALS=<path to json of the service account private key>
 export SSH_PRIVATE_KEY=<path_to_shh_key> # Gitlab ssh key needed to import churn repo
 make containerize-and-run-tests
+```
+### Build :
+If you just want to build your app into an image :
+```
+export GOOGLE_APPLICATION_CREDENTIALS=<path to json of the service account private key>
+export SSH_PRIVATE_KEY=<path_to_shh_key> # Gitlab ssh key needed to import churn repo
+make build-docker-image
 ```
 
 ### Push your image in google container registry:
