@@ -16,7 +16,7 @@ services:
       - PYTHONPATH=/usr/app/
     volumes:
       - ./chaos/infrastructure/config/config.yml:/usr/app/chaos/infrastructure/config/config.yml
-      - ./proxy/gcp_key.json:/usr/app/proxy/gcp_key.json
+      - $GOOGLE_APPLICATION_CREDENTIALS:/usr/app/proxy/gcp_key.json
     ports:
       - "8000:8000"
     depends_on:
