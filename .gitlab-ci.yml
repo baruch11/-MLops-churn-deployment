@@ -11,8 +11,10 @@ variables:
   IMAGE_TAG: $CI_COMMIT_SHORT_SHA
 
 functional-test:
-  image: docker/compose:1.28.5
+  image: docker/compose
   stage: functional-tests
+  services:
+  - docker:20.10.16-dind
   variables:
     GOOGLE_APPLICATION_CREDENTIALS: proxy/gcp_key.json
     SHORT_SHA: $CI_COMMIT_SHORT_SHA
