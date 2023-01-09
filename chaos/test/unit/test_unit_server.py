@@ -2,7 +2,6 @@ from churn.domain.domain_utils import get_test_set
 from chaos.application.server import app
 from fastapi.testclient import TestClient
 from sklearn.metrics import f1_score
-import json
 
 
 class TestServer(object):
