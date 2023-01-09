@@ -7,17 +7,16 @@ services:
       - db-data:/var/lib/postgresql/data
     ports:
       - "5442:5432"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=fastapi
 
   api:
     build: .
     environment:
-      DATABASE_URL: "postgresql://postgres:postgres@db/fastapi"
+      - GOOGLE_APPLICATION_CREDENTIALS=/usr/app/proxy/gcp_key.json
+    volumes:
+      - ./chaos/infrastructure/config/config.yml:/usr/app/chaos/infrastructure/config/config.yml
+      - ./proxy/gcp_key.json:/usr/app/proxy/gcp_key.json
     ports:
-      - "5000:8000"
+      - "8000:8000"
     depends_on:
       - db
 
