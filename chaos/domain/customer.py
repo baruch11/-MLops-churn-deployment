@@ -11,8 +11,9 @@ from chaos.infrastructure.config.config import config
 this_dir = os.path.dirname(os.path.realpath(__file__))
 
 
-class ModelNotFoundException(Exception):
+class ModelNotLoaded(Exception):
     """Model not found."""
+
 
 class Customer:
     """Class representing a bank customer."""
@@ -30,7 +31,7 @@ class Customer:
         self.marketing = marketing
         self.model = model
         if self.model is None:
-            raise ModelNotFoundException
+            raise ModelNotLoaded
 
     def predict_subscription(self) -> float:
         """Return appetence score [0,1] of the customer predicted by the model.
@@ -78,6 +79,6 @@ def load_churn_model():
                 model = pickle.load(model_pkl)
         except ggexp.NotFound:
             logging.error("%s not found in %s", source_blob_name, bucket_name)
-            raise ModelNotFoundException
+            raise ModelNotLoaded
 
     return model

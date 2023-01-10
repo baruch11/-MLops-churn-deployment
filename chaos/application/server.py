@@ -2,12 +2,11 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from chaos.domain.customer import (Customer, load_churn_model,
-                                   ModelNotFoundException)
+from chaos.domain.customer import Customer, load_churn_model, ModelNotLoaded
 from chaos.infrastructure.customer_loader import CustomerLoader
 from typing import Optional, Literal
 from datetime import datetime, date
-
+import logging
 
 class CustomerInput(BaseModel):
     """Churn detection parameters.
@@ -74,13 +73,25 @@ app = FastAPI(
     }]
 )
 
+HTTP_INTERNAL_SERVER_ERROR = 500
+
+
+@app.exception_handler(ModelNotLoaded)
+async def _module_not_found_handler(request: Request, exc: ModelNotLoaded):
+    logging.error("Churn is not loaded")
+    return JSONResponse(
+        status_code=HTTP_INTERNAL_SERVER_ERROR,
+        content={'message': "Churn model not loaded"})
+
+
 class UnicornException(Exception):
     def __init__(self, customer_id:int):
         self.customer_id =customer_id
 
 @app.exception_handler(UnicornException)
 async def unicorn_exception_handler(request: Request, exc: UnicornException):
-    return JSONResponse(status_code = 404, content = {'message' : f"Client ID {exc.customer_id} not found" })
+    return JSONResponse(status_code = 404,
+                        content = {'message' : f"Client ID {exc.customer_id} not found" })
 
 
 class Answer(BaseModel):
@@ -97,7 +108,11 @@ CHURN_MODEL = None
 async def startup_event():
     """Load model just once."""
     global CHURN_MODEL
-    CHURN_MODEL = load_churn_model()
+    CHURN_MODEL = None
+    try:
+        CHURN_MODEL = load_churn_model()
+    except ModelNotLoaded:
+        logging.error("No model loaded")
 
 
 @app.post("/detect/", tags=["detect"])
@@ -109,11 +124,8 @@ def detect(customer_input: CustomerInput):
     customer_input : CustomerInput(BaseModel)
         Customer marketing characterics
     """
-    try:
-        model = CHURN_MODEL
-    except ModelNotFoundException:
-        return Answer(answer=CHURN_MODEL_NOT_FOUND)
-    customer = Customer(customer_input.dict(), model)
+    customer = Customer(customer_input.dict(), CHURN_MODEL)
+
     answer = customer.predict_subscription()
 
     return Answer(answer=answer)
@@ -139,10 +151,6 @@ def detect_item(customer_id):
     customer_id : client ID
 
     """
-    try:
-        model = CHURN_MODEL
-    except ModelNotFoundException:
-        return Answer(answer=CHURN_MODEL_NOT_FOUND)
     result_ = CustomerLoader().does_the_ID_exist(customer_id)
     if not result_:
         raise UnicornException(customer_id=customer_id)
@@ -150,9 +158,8 @@ def detect_item(customer_id):
     load_customer = customer_loader.find_a_customer(customer_id)
     load_customer.drop(columns=['CHURN'])
     dict_customer = load_customer.to_dict(orient="records")[0]
-    customer = Customer(dict_customer, model)
+    customer = Customer(dict_customer, CHURN_MODEL)
 
     answer = customer.predict_subscription()
 
     return Answer(answer=answer)
-
