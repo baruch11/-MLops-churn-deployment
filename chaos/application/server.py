@@ -5,7 +5,6 @@ from pydantic import BaseModel
 from chaos.domain.customer import (Customer, load_churn_model,
                                    ModelNotFoundException)
 from chaos.infrastructure.customer_loader import CustomerLoader
-from chaos.infrastructure.infra_utils import isID
 from typing import Optional, Literal
 from datetime import datetime, date
 
@@ -122,7 +121,7 @@ def detect(customer_input: CustomerInput):
 
 @app.get("/customer/{customer_id}", tags=["read id"])
 def read_item(customer_id):
-    result_ = isID(customer_id)
+    result_ = CustomerLoader().does_the_ID_exist(customer_id)
     if not result_:
         raise UnicornException(customer_id=customer_id)
     customer_loader = CustomerLoader()
@@ -144,7 +143,7 @@ def detect_item(customer_id):
         model = CHURN_MODEL
     except ModelNotFoundException:
         return Answer(answer=CHURN_MODEL_NOT_FOUND)
-    result_ = isID(customer_id)
+    result_ = CustomerLoader().does_the_ID_exist(customer_id)
     if not result_:
         raise UnicornException(customer_id=customer_id)
     customer_loader = CustomerLoader()

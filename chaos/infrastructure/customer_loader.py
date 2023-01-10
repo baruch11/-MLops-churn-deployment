@@ -35,5 +35,10 @@ class CustomerLoader:
                         THEN  'Client ID exists'\
                         ELSE  'Client ID does not exist' \
                         END AS result;"
-        result_= pd.read_sql(query, self.engine)
+        result_query= pd.read_sql(query, self.engine)
+        result_=result_query['result'].values.tolist()[0]
+        if result_ == "Client ID exists":
+            result_ = True
+        else:
+            result_ = False
         return result_ 
