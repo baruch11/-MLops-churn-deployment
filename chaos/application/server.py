@@ -1,5 +1,6 @@
 """API definition for churn detection."""
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from chaos.domain.customer import (Customer, load_churn_model,
                                    ModelNotFoundException)
@@ -73,6 +74,14 @@ app = FastAPI(
     }]
 )
 
+class UnicornException(Exception):
+    def __init__(self, customer_id:int):
+        self.customer_id =customer_id
+
+@app.exception_handler(UnicornException)
+async def unicorn_exception_handler(request: Request, exc: UnicornException):
+    return JSONResponse(status_code = 404, content = {'message' : f"Client ID {exc.customer_id} not found" })
+
 
 class Answer(BaseModel):
     """Churn detection response."""
@@ -112,6 +121,9 @@ def detect(customer_input: CustomerInput):
 
 @app.get("/customer/{customer_id}", tags=["read id"])
 def read_item(customer_id):
+    result_ = CustomerLoader().does_the_ID_exist(customer_id)
+    if not result_:
+        raise UnicornException(customer_id=customer_id)
     customer_loader = CustomerLoader()
     df_prospect = customer_loader.find_a_customer(customer_id)
     dict_prospect = df_prospect.to_dict(orient="records")[0]
@@ -131,6 +143,9 @@ def detect_item(customer_id):
         model = CHURN_MODEL
     except ModelNotFoundException:
         return Answer(answer=CHURN_MODEL_NOT_FOUND)
+    result_ = CustomerLoader().does_the_ID_exist(customer_id)
+    if not result_:
+        raise UnicornException(customer_id=customer_id)
     customer_loader = CustomerLoader()
     load_customer = customer_loader.find_a_customer(customer_id)
     load_customer.drop(columns=['CHURN'])
