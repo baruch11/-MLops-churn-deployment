@@ -25,11 +25,14 @@ unit-test:
   script:
     - pytest chaos/test/unit
     - echo $CI_MERGE_REQUEST_TARGET_BRANCH_NAME 
+    - echo $CI_PIPELINE_SOURCE
   rules:
     # We don't launch unit-tests if merging into main, all other cases are ok
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
       when: never 
     - when: on_success
+
+
 
 
 build-docker-image:
@@ -51,7 +54,6 @@ build-docker-image:
   rules :
     # Only build and push image if we are merging into develop. 
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
-
 
 deployment-kubernetes:
   stage: deployment

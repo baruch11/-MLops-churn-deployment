@@ -14,7 +14,17 @@ spec:
       labels:
         app: chaos-1-deployment
     spec:
+      volumes:
+      - name: google-cloud-key
+        secret:
+          secretName: chaos-secrets-1
       containers:
-        - name: churn-api
-          image: eu.gcr.io/coyotta-2022/chaos-1:develop
-          imagePullPolicy: Always
+      - name: churn-api
+        image: eu.gcr.io/coyotta-2022/chaos-1:develop
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: google-cloud-key
+          mountPath: /var/secrets/google
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/secrets/google/key.json
