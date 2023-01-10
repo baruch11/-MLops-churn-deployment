@@ -37,11 +37,3 @@ class CustomerLoader:
                         END AS result;"
         result_= pd.read_sql(query, self.engine)
         return result_ 
-
-#c = CustomerLoader()
-#cc = c.does_the_ID_exist(15791700)
-#cc=cc['result'].values.tolist()[0]
-#if cc == "Client ID exists":
-#    print(True)
-#else:
-#    print(False)
