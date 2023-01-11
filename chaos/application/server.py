@@ -73,6 +73,7 @@ app = FastAPI(
     }]
 )
 
+HTTP_NOT_FOUND = 404
 HTTP_INTERNAL_SERVER_ERROR = 500
 HTTP_PROXY_AUTHENTICATION_REQUIRED = 407
 
@@ -96,7 +97,7 @@ class UnicornException(Exception):
 
 @app.exception_handler(UnicornException)
 async def unicorn_exception_handler(request: Request, exc: UnicornException):
-    return JSONResponse(status_code = 404,
+    return JSONResponse(status_code = HTTP_NOT_FOUND,
                         content = {'message' : f"Client ID {exc.customer_id} not found" })
 
 
