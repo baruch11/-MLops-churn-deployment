@@ -85,7 +85,7 @@ async def _module_not_found_handler(request: Request, exc: ModelNotLoaded):
 
 @app.exception_handler(NoSQL_access)
 async def _postgressql_connexion__handler(request: Request, exc: NoSQL_access):
-    logging.error("Connexion sql not found")
+    logging.error("SQL connexion not found")
     return JSONResponse(
         status_code=HTTP_PROXY_AUTHENTICATION_REQUIRED,
         content={'message': "No SQL connexion"})
