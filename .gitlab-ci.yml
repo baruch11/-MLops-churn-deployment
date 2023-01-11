@@ -23,6 +23,7 @@ functional-test:
     TEST_SAMPLE_CUSTOMER_PATH: .chaos/test/data/test_sample_customer.csv
     TEST_SAMPLE_INDICATORS_PATH: .chaos/test/data/test_sample_indicators.csv
 
+
   before_script:
     - echo "$CONFIG_YML" > chaos/infrastructure/config/config.yml
     - cat $GCP_SA_KEY > ./proxy/gcp_key.json
