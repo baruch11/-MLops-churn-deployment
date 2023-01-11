@@ -3,7 +3,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from chaos.domain.customer import Customer, load_churn_model, ModelNotLoaded
-from chaos.infrastructure.customer_loader import CustomerLoader
+from chaos.infrastructure.customer_loader import CustomerLoader, NoSQL_access
 from typing import Optional, Literal
 from datetime import datetime, date
 import logging
@@ -74,7 +74,7 @@ app = FastAPI(
 )
 
 HTTP_INTERNAL_SERVER_ERROR = 500
-
+HTTP_PROXY_AUTHENTICATION_REQUIRED = 407
 
 @app.exception_handler(ModelNotLoaded)
 async def _module_not_found_handler(request: Request, exc: ModelNotLoaded):
@@ -83,6 +83,12 @@ async def _module_not_found_handler(request: Request, exc: ModelNotLoaded):
         status_code=HTTP_INTERNAL_SERVER_ERROR,
         content={'message': "Churn model not loaded"})
 
+@app.exception_handler(NoSQL_access)
+async def _postgressql_connexion__handler(request: Request, exc: NoSQL_access):
+    logging.error("Connexion sql not found")
+    return JSONResponse(
+        status_code=HTTP_PROXY_AUTHENTICATION_REQUIRED,
+        content={'message': "No SQL connexion"})
 
 class UnicornException(Exception):
     def __init__(self, customer_id:int):
@@ -133,7 +139,10 @@ def detect(customer_input: CustomerInput):
 
 @app.get("/customer/{customer_id}", tags=["read id"])
 def read_item(customer_id):
-    result_ = CustomerLoader().does_the_ID_exist(customer_id)
+    try:
+        result_ = CustomerLoader().does_the_ID_exist(customer_id)
+    except:
+        raise NoSQL_access
     if not result_:
         raise UnicornException(customer_id=customer_id)
     customer_loader = CustomerLoader()
@@ -151,7 +160,10 @@ def detect_item(customer_id):
     customer_id : client ID
 
     """
-    result_ = CustomerLoader().does_the_ID_exist(customer_id)
+    try:
+        result_ = CustomerLoader().does_the_ID_exist(customer_id)
+    except:
+        raise NoSQL_access
     if not result_:
         raise UnicornException(customer_id=customer_id)
     customer_loader = CustomerLoader()

@@ -1,6 +1,8 @@
 import pandas as pd
 from chaos.infrastructure.connexion import Connexion
 
+class NoSQL_access(Exception):
+    """Postgres instance not found."""
 
 class CustomerLoader:
 
@@ -61,6 +63,8 @@ class CustomerLoader:
                         THEN  'Client ID exists'\
                         ELSE  'Client ID does not exist' \
                         END AS result;"
+        
         result_query= pd.read_sql(query, self.engine)
         result_=result_query['result'].values.tolist()[0]
         return result_ == "Client ID exists"
+
