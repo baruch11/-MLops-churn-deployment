@@ -27,7 +27,7 @@ containerize-and-start-bdd:
 containerize-and-run-tests:
 	export SHORT_SHA=$(SHORT_SHA); \
 	DOCKER_BUILDKIT=1 docker compose build --ssh churn_ssh=$(SSH_PRIVATE_KEY); \
-	docker compose run api pytest -s chaos/test/functional
+	docker compose run api pytest chaos/test
 	docker compose down
 
 initialize-bdd:
