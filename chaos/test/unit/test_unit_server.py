@@ -2,7 +2,8 @@ from churn.domain.domain_utils import get_test_set
 from chaos.application.server import app
 from fastapi.testclient import TestClient
 from sklearn.metrics import f1_score
-
+from chaos.domain.customer import ModelNotLoaded
+from chaos.application.server import HTTP_INTERNAL_SERVER_ERROR
 
 class TestServer(object):
 
@@ -23,3 +24,14 @@ class TestServer(object):
             print(f"F1 score {perf_api}")
             assert perf_api > EXPECTED_F1_SCORE
 
+    def test_missing_model(self, monkeypatch):
+        """Check error status if model is missing."""
+        def _model_not_found():
+            raise ModelNotLoaded
+
+        monkeypatch.setattr("chaos.application.server.load_churn_model",
+                            _model_not_found)
+
+        with TestClient(app) as client:
+            response = client.post("/detect/", json={"BALANCE": 0})
+            assert response.status_code == HTTP_INTERNAL_SERVER_ERROR
