@@ -27,10 +27,9 @@ functional-test:
     - echo "$CONFIG_YML" > chaos/infrastructure/config/config.yml
     - cat $GCP_SA_KEY > ./proxy/gcp_key.json
     - cat $GCP_SA_KEY | docker login -u _json_key --password-stdin https://$REGISTRY_HOST
-    - apk add make
   script:
     - docker pull $IMAGE_NAME:$SHORT_SHA
-    - make containerize-and-run-tests
+    - docker compose run api pytest chaos/test
 
 .unit-test:
   image: python:3.9
