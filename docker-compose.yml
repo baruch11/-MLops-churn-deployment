@@ -5,6 +5,8 @@ services:
     image: postgres:13-alpine
     volumes:
       - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "trust"
     ports:
       - "5442:5432"
 
