@@ -6,6 +6,7 @@ from chaos.domain.customer import Customer, load_churn_model, ModelNotLoaded
 from chaos.infrastructure.customer_loader import CustomerLoader
 from typing import Optional, Literal
 from datetime import datetime, date
+from sqlalchemy.exc import OperationalError
 import logging
 
 class CustomerInput(BaseModel):
@@ -73,8 +74,8 @@ app = FastAPI(
     }]
 )
 
+HTTP_NOT_FOUND = 404
 HTTP_INTERNAL_SERVER_ERROR = 500
-
 
 @app.exception_handler(ModelNotLoaded)
 async def _module_not_found_handler(request: Request, exc: ModelNotLoaded):
@@ -83,6 +84,12 @@ async def _module_not_found_handler(request: Request, exc: ModelNotLoaded):
         status_code=HTTP_INTERNAL_SERVER_ERROR,
         content={'message': "Churn model not loaded"})
 
+@app.exception_handler(OperationalError)
+async def _postgressql_connexion__handler(request: Request, exc: OperationalError):
+    logging.error("SQL connexion not found")
+    return JSONResponse(
+        status_code=HTTP_INTERNAL_SERVER_ERROR,
+        content={'message': "No SQL connexion"})
 
 class UnicornException(Exception):
     def __init__(self, customer_id:int):
@@ -90,7 +97,7 @@ class UnicornException(Exception):
 
 @app.exception_handler(UnicornException)
 async def unicorn_exception_handler(request: Request, exc: UnicornException):
-    return JSONResponse(status_code = 404,
+    return JSONResponse(status_code = HTTP_NOT_FOUND,
                         content = {'message' : f"Client ID {exc.customer_id} not found" })
 
 
@@ -133,7 +140,7 @@ def detect(customer_input: CustomerInput):
 
 @app.get("/customer/{customer_id}", tags=["read id"])
 def read_item(customer_id):
-    result_ = CustomerLoader().does_the_ID_exist(customer_id)
+    result_ = CustomerLoader().does_the_ID_exist(customer_id)    
     if not result_:
         raise UnicornException(customer_id=customer_id)
     customer_loader = CustomerLoader()

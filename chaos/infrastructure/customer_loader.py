@@ -1,7 +1,6 @@
 import pandas as pd
 from chaos.infrastructure.connexion import Connexion
 
-
 class CustomerLoader:
 
     def __init__(self):
