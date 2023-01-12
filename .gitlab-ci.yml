@@ -35,7 +35,7 @@ functional-test:
     - docker pull $IMAGE_NAME:$SHORT_SHA
     - apk add python3
     - apk add py3-pip
-    - pip3 install pandas sqlalchemy
+    - pip install pandas sqlalchemy
 
 .unit-test:
   image: python:3.9
