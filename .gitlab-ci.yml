@@ -22,11 +22,6 @@ functional-test:
     SHORT_SHA: 0b94cf5c
     TEST_SAMPLE_CUSTOMER_PATH: .chaos/test/data/test_sample_customer.csv
     TEST_SAMPLE_INDICATORS_PATH: .chaos/test/data/test_sample_indicators.csv
-    # If you're using GitLab Runner 12.7 or earlier with the Kubernetes executor and Kubernetes 1.6 or earlier,
-    # the variable must be set to tcp://localhost:2375 because of how the
-    # Kubernetes executor connects services to the job container
-    # DOCKER_HOST: tcp://localhost:2375
-    #
     DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: overlay2
 
