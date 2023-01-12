@@ -33,8 +33,7 @@ functional-test:
     - cat $GCP_SA_KEY | docker login -u _json_key --password-stdin https://$REGISTRY_HOST
   script:
     - docker pull $IMAGE_NAME:$SHORT_SHA
-    - docker-compose up -d 
-    - docker network inspect chaos-1_default
+    - docker-compose up
 
 .unit-test:
   image: python:3.9
