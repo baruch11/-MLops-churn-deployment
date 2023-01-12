@@ -3,7 +3,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from chaos.domain.customer import Customer, load_churn_model, ModelNotLoaded
-from chaos.infrastructure.customer_loader import CustomerLoader, NoSQL_access
+from chaos.infrastructure.customer_loader import CustomerLoader
 from typing import Optional, Literal
 from datetime import datetime, date
 from sqlalchemy.exc import OperationalError

@@ -1,9 +1,6 @@
 import pandas as pd
 from chaos.infrastructure.connexion import Connexion
 
-class NoSQL_access(Exception):
-    """Postgres instance not found."""
-
 class CustomerLoader:
 
     def __init__(self):
