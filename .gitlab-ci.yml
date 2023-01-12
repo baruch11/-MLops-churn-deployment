@@ -34,7 +34,7 @@ functional-test:
   script:
     - docker pull $IMAGE_NAME:$SHORT_SHA
     - docker-compose up -d 
-    - docker network ls
+    - docker network inspect chaos-1_default
 
 .unit-test:
   image: python:3.9
