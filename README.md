@@ -78,6 +78,31 @@ kubectl create secret generic chaos-secrets-1 --from-file=key.json=<path to json
 
 ## CI/CD
 
+### Workflow
+
+#### Integration steps view
+
+|Steps  |CI/CD jobs  |Trigger |
+|--|--|--|
+|push feature branch|unit-test|Developper|
+|MR into develop branch|- unit-test<br>- build docker|Developper|
+|Push develop branch|- unit-test<br>- build docker<br>- push to registry|Gitlab on MR success|
+|MR into main branch|deployment|Developper|
+|Push main branch||Gitlab on MR success|
+
+
+#### Job view
+
+
+|CI/CD jobs  |Triggers  |
+|--|--|
+|unit-test  |- push feature branch<br>- MR into develop branch<br>- push develop branch|
+|build-docker|- MR into develop branch<br>- push develop branch|
+|push-to-registry|- push docker image into GCP registry<br>- push develop branch|
+|deployment|- MR into main branch|
+
+
+
 ### Gitlab variables
 	
 - BASE64_GOOGLE_CREDENTIALS: (unused) base64 service account
