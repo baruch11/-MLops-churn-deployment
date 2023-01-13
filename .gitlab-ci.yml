@@ -10,23 +10,7 @@ variables:
   IMAGE_NAME: $REGISTRY_HOST/coyotta-2022/$CI_PROJECT_NAME
   IMAGE_TAG: Emeric_test   ## Temporal modif in order to run test easily. 
 
-temporal-build: # To remove
-  stage: test
-  image: docker:latest
-  services:
-  - docker:20.10.16-dind
-
-  before_script:
-    # We need to create the folder /tmp because using the docker --ssh, the "~" characeter didn't work 
-    - mkdir /tmp/.ssh && ssh-keyscan gitlab.com >> /tmp/.ssh/known_hosts
-    - echo "$SSH_CHURN_ACCESS" > /tmp/.ssh/id_ed25519 && chmod 600 /tmp/.ssh/id_ed25519
-    - cat $GCP_SA_KEY | docker login -u _json_key --password-stdin https://$REGISTRY_HOST
-
-  script:
-    - DOCKER_BUILDKIT=1 docker build --ssh churn_ssh=/tmp/.ssh/id_ed25519 -t $IMAGE_NAME:$IMAGE_TAG .
-    - docker push $IMAGE_NAME:$IMAGE_TAG
-
-.functional-test:
+functional-test:
   image: docker/compose 
   stage: functional-tests
   services:
@@ -47,6 +31,7 @@ temporal-build: # To remove
     - cat $GCP_SA_KEY | docker login -u _json_key --password-stdin https://$REGISTRY_HOST
   script:
     - docker pull $IMAGE_NAME:$SHORT_SHA
+    - docker-compose run db 
     - docker-compose run --service-ports --volume `pwd`/chaos/test/data:/usr/app/chaos/test/data api python3 /usr/app/chaos/infrastructure/postgres_manager.py -c "./chaos/test/data/test_sample_customer.csv" -i "./chaos/test/data/test_sample_indicators.csv"
 
 .unit-test:
