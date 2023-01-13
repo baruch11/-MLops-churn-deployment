@@ -2,22 +2,44 @@
 stages:
   - test
   - build
+  - functional-tests
   - deployment
 
 variables:
   REGISTRY_HOST: eu.gcr.io
   IMAGE_NAME: $REGISTRY_HOST/coyotta-2022/$CI_PROJECT_NAME
-  IMAGE_TAG: $CI_COMMIT_SHORT_SHA
+  IMAGE_TAG: Emeric_test   ## Temporal modif in order to run test easily. 
+
+functional-test:
+  image: docker/compose 
+  stage: functional-tests
+  services:
+  - docker:20.10.16-dind
+  variables:
+    GOOGLE_APPLICATION_CREDENTIALS: ./proxy/gcp_key.json
+    SHORT_SHA: $IMAGE_TAG
+    TEST_SAMPLE_CUSTOMER_PATH: .chaos/test/data/test_sample_customer.csv
+    TEST_SAMPLE_INDICATORS_PATH: .chaos/test/data/test_sample_indicators.csv
 
 
-unit-test:
+
+
+  before_script:
+    - echo "$CONFIG_YML" > chaos/infrastructure/config/config.yml
+    - cat $GCP_SA_KEY > ./proxy/gcp_key.json
+    - cat $GCP_SA_KEY | docker login -u _json_key --password-stdin https://$REGISTRY_HOST
+  script:
+    - docker pull $IMAGE_NAME:$SHORT_SHA
+    - docker-compose run --volume `pwd`/chaos/test/data:/usr/app/chaos/test/data api bash -c "sleep 10 && python3 /usr/app/chaos/infrastructure/postgres_manager.py -c "./chaos/test/data/test_sample_customer.csv" -i "./chaos/test/data/test_sample_indicators.csv" && pytest ./chaos/test"
+
+.unit-test:
   image: python:3.9
   stage: test
   before_script:
     - mkdir ~/.ssh && ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
     - echo "$SSH_CHURN_ACCESS" > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
-    - echo "$CONFIG_YML" > chaos/infrastructure/config/config_template.yml
-    - export YOTTA_ML3_CONFIGURATION_PATH=$(pwd)/chaos/infrastructure/config/config_template.yml
+    - echo "$CONFIG_YML" > chaos/infrastructure/config/config.yml
+    - export YOTTA_ML3_CONFIGURATION_PATH=$(pwd)/chaos/infrastructure/config/config.yml
     - pip install poetry
     - poetry config virtualenvs.in-project true --local
     - poetry install
@@ -35,7 +57,7 @@ unit-test:
 
 
 
-build-docker-image:
+.build-docker-image:
   stage: build
   image: docker:latest
   services:
@@ -47,7 +69,6 @@ build-docker-image:
     - echo "$SSH_CHURN_ACCESS" > /tmp/.ssh/id_ed25519 && chmod 600 /tmp/.ssh/id_ed25519
     - cat $GCP_SA_KEY | docker login -u _json_key --password-stdin https://$REGISTRY_HOST
 
-  # TODO : login to docker registry
   script:
     - DOCKER_BUILDKIT=1 docker build --ssh churn_ssh=/tmp/.ssh/id_ed25519 -t $IMAGE_NAME:$IMAGE_TAG .
     - docker push $IMAGE_NAME:$IMAGE_TAG
@@ -55,7 +76,7 @@ build-docker-image:
     # Only build and push image if we are merging into develop. 
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
 
-deployment-kubernetes:
+.deployment-kubernetes:
   stage: deployment
   image: google/cloud-sdk
     
