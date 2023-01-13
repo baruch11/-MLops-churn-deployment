@@ -20,8 +20,7 @@ functional-test:
     SHORT_SHA: $IMAGE_TAG
     TEST_SAMPLE_CUSTOMER_PATH: .chaos/test/data/test_sample_customer.csv
     TEST_SAMPLE_INDICATORS_PATH: .chaos/test/data/test_sample_indicators.csv
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_DRIVER: overlay2
+
 
 
 
