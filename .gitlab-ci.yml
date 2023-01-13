@@ -33,15 +33,12 @@ functional-test:
     - cat $GCP_SA_KEY | docker login -u _json_key --password-stdin https://$REGISTRY_HOST
   script:
     - docker pull $IMAGE_NAME:$SHORT_SHA
-    - apk add --no-cache --update \
-      python3 python3-dev gcc \
-      gfortran musl-dev g++ \
-      libffi-dev openssl-dev \
-      libxml2 libxml2-dev \
-      libxslt libxslt-dev \
-      libjpeg-turbo-dev zlib-dev
-    - pip install --upgrade pip
-    - pip install pandas
+    - docker compose run --service-ports -d db
+    - docker compose run --service-ports \
+      -d -v `pwd`/chaos/test/data:/usr/app/chaos/test/data \
+      api python3 chaos/infrastructure/postgres_manager.py \
+      -c "./chaos/test/data/test_sample_customer.csv" \
+      -i "./chaos/test/data/test_sample_indicators.csv"
 
 .unit-test:
   image: python:3.9
