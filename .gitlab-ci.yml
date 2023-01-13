@@ -31,7 +31,7 @@ functional-test:
     - cat $GCP_SA_KEY | docker login -u _json_key --password-stdin https://$REGISTRY_HOST
   script:
     - docker pull $IMAGE_NAME:$SHORT_SHA
-    - docker-compose up
+    - docker-compose run api pytest chaos/test
     # docker-compose run --volume `pwd`/chaos/test/data:/usr/app/chaos/test/data api python3 /usr/app/chaos/infrastructure/postgres_manager.py -c "./chaos/test/data/test_sample_customer.csv" -i "./chaos/test/data/test_sample_indicators.csv"
 
 .unit-test:
