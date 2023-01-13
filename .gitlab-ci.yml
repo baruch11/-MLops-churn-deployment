@@ -8,11 +8,25 @@ stages:
 variables:
   REGISTRY_HOST: eu.gcr.io
   IMAGE_NAME: $REGISTRY_HOST/coyotta-2022/$CI_PROJECT_NAME
-  IMAGE_TAG: 277125a1   ## Temporal modif in order to run test easily. 
+  IMAGE_TAG: Emeric_test   ## Temporal modif in order to run test easily. 
 
+temporal-build: # To remove
+  stage: test
+  image: docker:latest
+  services:
+  - docker:20.10.16-dind
 
+  before_script:
+    # We need to create the folder /tmp because using the docker --ssh, the "~" characeter didn't work 
+    - mkdir /tmp/.ssh && ssh-keyscan gitlab.com >> /tmp/.ssh/known_hosts
+    - echo "$SSH_CHURN_ACCESS" > /tmp/.ssh/id_ed25519 && chmod 600 /tmp/.ssh/id_ed25519
+    - cat $GCP_SA_KEY | docker login -u _json_key --password-stdin https://$REGISTRY_HOST
 
-functional-test:
+  script:
+    - DOCKER_BUILDKIT=1 docker build --ssh churn_ssh=/tmp/.ssh/id_ed25519 -t $IMAGE_NAME:$IMAGE_TAG .
+    - docker push $IMAGE_NAME:$IMAGE_TAG
+
+.functional-test:
   image: docker/compose 
   stage: functional-tests
   services:
@@ -72,7 +86,6 @@ functional-test:
     - echo "$SSH_CHURN_ACCESS" > /tmp/.ssh/id_ed25519 && chmod 600 /tmp/.ssh/id_ed25519
     - cat $GCP_SA_KEY | docker login -u _json_key --password-stdin https://$REGISTRY_HOST
 
-  # TODO : login to docker registry
   script:
     - DOCKER_BUILDKIT=1 docker build --ssh churn_ssh=/tmp/.ssh/id_ed25519 -t $IMAGE_NAME:$IMAGE_TAG .
     - docker push $IMAGE_NAME:$IMAGE_TAG
