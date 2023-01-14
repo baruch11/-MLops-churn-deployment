@@ -86,10 +86,10 @@ async def _module_not_found_handler(request: Request, exc: ModelNotLoaded):
 
 @app.exception_handler(OperationalError)
 async def _postgressql_connexion__handler(request: Request, exc: OperationalError):
-    logging.error("SQL connexion not found")
+    logging.error("SQL connection not found")
     return JSONResponse(
         status_code=HTTP_INTERNAL_SERVER_ERROR,
-        content={'message': "No SQL connexion"})
+        content={'message': "No SQL connection"})
 
 class UnicornException(Exception):
     def __init__(self, customer_id:int):
