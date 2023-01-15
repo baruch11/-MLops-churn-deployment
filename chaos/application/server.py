@@ -98,7 +98,7 @@ app = FastAPI(
 
        {"name": "detect from id",
         "description": ("Give a probability of churn " 
-                        "given customer's ID")          
+                        "given customer's id")          
     }]
 )
 
