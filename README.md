@@ -28,7 +28,7 @@ poetry install
 source .venv/bin/activate
 make run-server
 ```
-### Try the API at adress :  
+#### Try the API at adress :  
 - http://0.0.0.0:8000/docs
 
 ![](images/churn_api.png)
