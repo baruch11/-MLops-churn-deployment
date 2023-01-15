@@ -125,12 +125,7 @@ async def request_middleware(request, call_next):
         try:
             response = await call_next(request)
 
-        except Exception as ex:
-            logger.error(f"Request failed: {ex}")
-            response = JSONResponse(content={"success": False}, status_code=500)
-
         finally:
-            response.headers["X-Request-ID"] = request_id
             logger.info(f"Request status code : {response.status_code}")
             logger.info("Request ended")
             return response
