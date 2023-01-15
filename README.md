@@ -28,7 +28,9 @@ poetry install
 source .venv/bin/activate
 make run-server
 ```
-Try the api at adress http://0.0.0.0:8000/docs
+- **Try the API at adress** :  http://0.0.0.0:8000/docs
+
+![](images/churn_api.png)
 
 ## Docker image 
 If you want to containerize locally your code and run it you can do the following :
