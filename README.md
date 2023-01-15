@@ -10,7 +10,7 @@
 >
 > **Original code base for churn detection model is here** :
 >
-> https://gitlab.com/yotta-academy/mle-bootcamp/projects/ml-project/project-1-fall-2022/churn-modelling-salima-charles-emeric
+> [🐟🐠🐟🐠🐟🐠🐟🐠](https://gitlab.com/yotta-academy/mle-bootcamp/projects/ml-project/project-1-fall-2022/churn-modelling-salima-charles-emeric)
 
 
 ## Getting started
