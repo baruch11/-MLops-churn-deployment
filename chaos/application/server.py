@@ -7,7 +7,8 @@ from chaos.infrastructure.customer_loader import CustomerLoader
 from typing import Optional, Literal
 from datetime import datetime, date
 from sqlalchemy.exc import OperationalError
-import logging
+import loguru
+import uuid
 
 class CustomerInput(BaseModel):
     """Churn detection parameters.
@@ -74,19 +75,23 @@ app = FastAPI(
     }]
 )
 
+logger = loguru.logger
+logger.remove()
+logger.add('logs/logs.logs', format="{time} - {level} - ({extra[request_id]}) {message} ", level="DEBUG")
+
 HTTP_NOT_FOUND = 404
 HTTP_INTERNAL_SERVER_ERROR = 500
 
 @app.exception_handler(ModelNotLoaded)
 async def _module_not_found_handler(request: Request, exc: ModelNotLoaded):
-    logging.error("Churn is not loaded")
+    logger.error("Churn is not loaded")
     return JSONResponse(
         status_code=HTTP_INTERNAL_SERVER_ERROR,
         content={'message': "Churn model not loaded"})
 
 @app.exception_handler(OperationalError)
 async def _postgressql_connexion__handler(request: Request, exc: OperationalError):
-    logging.error("SQL connection not found")
+    logger.error("SQL connection not found")
     return JSONResponse(
         status_code=HTTP_INTERNAL_SERVER_ERROR,
         content={'message': "No SQL connection"})
@@ -97,6 +102,7 @@ class UnicornException(Exception):
 
 @app.exception_handler(UnicornException)
 async def unicorn_exception_handler(request: Request, exc: UnicornException):
+    logger.error(f"Client ID {exc.customer_id} not found")
     return JSONResponse(status_code = HTTP_NOT_FOUND,
                         content = {'message' : f"Client ID {exc.customer_id} not found" })
 
@@ -110,6 +116,25 @@ class Answer(BaseModel):
 CHURN_MODEL_NOT_FOUND = -1
 CHURN_MODEL = None
 
+@app.middleware("http")
+async def request_middleware(request, call_next):
+    request_id = str(uuid.uuid4())
+    with logger.contextualize(request_id=request_id):
+        logger.info("Request started")
+
+        try:
+            response = await call_next(request)
+
+        except Exception as ex:
+            logger.error(f"Request failed: {ex}")
+            response = JSONResponse(content={"success": False}, status_code=500)
+
+        finally:
+            response.headers["X-Request-ID"] = request_id
+            logger.info(f"Request status code : {response.status_code}")
+            logger.info("Request ended")
+            return response
+
 
 @app.on_event("startup")
 async def startup_event():
@@ -119,7 +144,7 @@ async def startup_event():
     try:
         CHURN_MODEL = load_churn_model()
     except ModelNotLoaded:
-        logging.error("No model loaded")
+        logger.error("No model loaded")
 
 
 @app.post("/detect/", tags=["detect"])
