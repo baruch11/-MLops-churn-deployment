@@ -20,7 +20,7 @@ description = """
 You will be able to:
 
 * **Detect Churner** (Route #1).
-* **Read Customer features from Id** (Route #2).
+* **Read Customer's features from Id** (Route #2).
 * **Detect Churner from Id** (Route #3).
 """
 
