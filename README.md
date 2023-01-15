@@ -22,13 +22,14 @@ poetry config --local virtualenvs.in-project true
 poetry install
 ```
 
-### Run api locally
+### Run API locally
 
 ```
 source .venv/bin/activate
 make run-server
 ```
-- **Try the API at adress** :  http://0.0.0.0:8000/docs
+### Try the API at adress :  
+- http://0.0.0.0:8000/docs
 
 ![](images/churn_api.png)
 
