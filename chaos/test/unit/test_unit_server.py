@@ -47,7 +47,7 @@ class TestServer(object):
                             _sql_not_found)
 
         with TestClient(app) as client:
-            response = client.get("/customer/11")
+            response = client.get("/customer/15791700")
             print(response.json())
             assert response.status_code == HTTP_INTERNAL_SERVER_ERROR
             assert response.json().get('message') == 'No SQL connection'
