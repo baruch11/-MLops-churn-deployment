@@ -10,7 +10,6 @@ FROM python:3.9-slim
 
 
 RUN apt-get -yq update && apt-get -yqq install ssh git
-RUN apt-get update && apt-get install -y python3  python3-dbg  python3-pip
 RUN mkdir ~/.ssh && ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
 
 COPY --from=requirements-stage /tmp/requirements.txt /usr/app/requirements.txt
