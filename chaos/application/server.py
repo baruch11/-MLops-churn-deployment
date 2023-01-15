@@ -11,6 +11,19 @@ from enum import Enum, IntEnum
 import loguru
 import uuid
 
+description = """
+### Churn detection API will help you to detect churners. 🚀
+
+
+#### Users
+
+You will be able to:
+
+* **Detect Churner** (Route #1).
+* **Read Customer features from Id** (Route #2).
+* **Detect Churner from Id** (Route #3).
+"""
+
 class CustomerInput(BaseModel):
     """Churn detection parameters.
 
@@ -74,11 +87,18 @@ class Customer_ids(IntEnum, Enum):
 
 
 app = FastAPI(
-    title="Churn detection",
+    title="🚀 Churn detection",
+    description=description,
     openapi_tags=[{
         "name": "detect",
         "description": ("Give a probability of churn "
-                        "given customer's characteristics")
+                        "given customer's characteristics")},
+       {"name": "read id",
+        "description": ("Read customer's features from given id")},
+
+       {"name": "detect from id",
+        "description": ("Give a probability of churn " 
+                        "given customer's ID")          
     }]
 )
 
