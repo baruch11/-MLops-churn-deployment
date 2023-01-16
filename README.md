@@ -10,7 +10,7 @@
 >
 > **Original code base for churn detection model is here** :
 >
-> [🐟🐠🐟🐠🐟🐠🐟🐠](https://gitlab.com/yotta-academy/mle-bootcamp/projects/ml-project/project-1-fall-2022/churn-modelling-salima-charles-emeric)
+> https://gitlab.com/yotta-academy/mle-bootcamp/projects/ml-project/project-1-fall-2022/churn-modelling-salima-charles-emeric
 
 
 ## Getting started
@@ -30,8 +30,6 @@ make run-server
 ```
 #### Try the API at adress :  
 - http://0.0.0.0:8000/docs
-
-![](images/churn_api.png)
 
 ## Docker image 
 If you want to containerize locally your code and run it you can do the following :
