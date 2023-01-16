@@ -3,6 +3,7 @@ stages:
   - test
   - build
   - build_push
+  - functional-tests
   - deployment
 
 variables:
@@ -17,8 +18,8 @@ unit-test:
   before_script:
     - mkdir ~/.ssh && ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
     - echo "$SSH_CHURN_ACCESS" > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
-    - echo "$CONFIG_YML" > chaos/infrastructure/config/config_template.yml
-    - export YOTTA_ML3_CONFIGURATION_PATH=$(pwd)/chaos/infrastructure/config/config_template.yml
+    - echo "$CONFIG_YML" > chaos/infrastructure/config/config.yml
+    - export YOTTA_ML3_CONFIGURATION_PATH=$(pwd)/chaos/infrastructure/config/config.yml
     - pip install poetry
     - poetry config virtualenvs.in-project true --local
     - poetry install
@@ -48,6 +49,7 @@ unit-test:
     - cat $GCP_SA_KEY | docker login -u _json_key --password-stdin https://$REGISTRY_HOST
 
 
+
 build-docker-image:
   <<: *build_cfg
   stage: build
@@ -67,6 +69,27 @@ build-push-docker-image:
   rules :
     # Build & push image to registry on push of develop or main branches.
     - if: $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "main"
+
+
+functional-test:
+  image: docker/compose 
+  stage: functional-tests
+  services:
+  - docker:20.10.16-dind
+  variables:
+    GOOGLE_APPLICATION_CREDENTIALS: ./proxy/gcp_key.json
+    SHORT_SHA: $IMAGE_TAG
+
+  before_script:
+    - echo "$CONFIG_YML" > chaos/infrastructure/config/config.yml
+    - cat $GCP_SA_KEY > ./proxy/gcp_key.json
+    - cat $GCP_SA_KEY | docker login -u _json_key --password-stdin https://$REGISTRY_HOST
+  script:
+    - docker pull $IMAGE_NAME:$SHORT_SHA
+    - docker-compose run --volume `pwd`/chaos/test/data:/usr/app/chaos/test/data api bash -c "sleep 10 && python3 /usr/app/utils/postgres_manager.py && pytest ./chaos/test"
+  rules :
+    # Only pull and run functional tests if merging into develop
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
 
 
 deployment-kubernetes:

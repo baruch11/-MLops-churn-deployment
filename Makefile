@@ -21,12 +21,15 @@ containerize-and-start-app : ## We are exporting the SHORT_SHA to use it in the 
 	DOCKER_BUILDKIT=1 docker compose build --ssh churn_ssh=$(SSH_PRIVATE_KEY); \
 	docker compose up
 
+containerize-and-start-bdd:
+	export SHORT_SHA=$(SHORT_SHA); \
+	docker compose run --service-ports db
+
 containerize-and-run-tests:
 	export SHORT_SHA=$(SHORT_SHA); \
 	DOCKER_BUILDKIT=1 docker compose build --ssh churn_ssh=$(SSH_PRIVATE_KEY); \
-	docker compose run api pytest chaos/test/
+	docker compose run api pytest --cov=$(PROJECT_NAME) $(UNIT_TEST_DIR) --cov-report=html --cov-config=$(COV_CONFIG_FILE_LOC) --cov-report term 
 	docker compose down
-
 
 proxy-start:
 	cloud_sql_proxy -instances=$(INSTANCE_CONNECTION_NAME)=tcp:5432
