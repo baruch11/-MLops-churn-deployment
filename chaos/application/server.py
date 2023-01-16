@@ -7,7 +7,6 @@ from chaos.infrastructure.customer_loader import CustomerLoader
 from typing import Optional, Literal
 from datetime import datetime, date
 from sqlalchemy.exc import OperationalError
-from enum import Enum, IntEnum
 import loguru
 import uuid
 
@@ -79,11 +78,6 @@ class BddCustomerOutput(BaseModel):
     SCORE_CREDIT: float
     CHURN: str
 
-class Customer_ids(IntEnum, Enum):
-    customer_1 = 15791700
-    customer_2 = 15569438
-    customer_3 = 15642821
-    customer_fake = 123456789
 
 
 app = FastAPI(
@@ -186,7 +180,7 @@ def detect(customer_input: CustomerInput):
 
 
 @app.get("/customer/{customer_id}", tags=["read id"])
-def read_item(customer_id : Customer_ids):
+def read_item(customer_id):
     result_ = CustomerLoader().does_the_ID_exist(customer_id)    
     if not result_:
         raise UnicornException(customer_id=customer_id)
@@ -197,7 +191,7 @@ def read_item(customer_id : Customer_ids):
     return bdd_customer_output
 
 @app.get("/customer_detect/{customer_id}", tags=["detect from id"])
-def detect_item(customer_id: Customer_ids):
+def detect_item(customer_id):
     """Detect churn from customer id.
 
     Parameters
