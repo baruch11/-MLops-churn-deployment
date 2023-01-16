@@ -86,7 +86,7 @@ kubectl create secret generic chaos-secrets-1 --from-file=key.json=<path to json
 |--|--|--|
 |push feature branch|- unit tests|Developper|
 |MR into develop branch|- unit tests<br>- build docker|Developper|
-|Push develop branch|- unit tests<br>- build docker<br>- push image to registry|Gitlab on MR success|
+|Push develop branch|- unit tests<br>- build docker image & push it to registry|Gitlab on MR success|
 |MR into main branch|- functionnal tests|Developper|
 |Push main branch|- build & push image<br>- deployment|Gitlab on MR success|
 

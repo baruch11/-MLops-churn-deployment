@@ -54,7 +54,7 @@ build-docker-image:
   script:
     - DOCKER_BUILDKIT=1 docker build --ssh churn_ssh=/tmp/.ssh/id_ed25519 -t $IMAGE_NAME:$IMAGE_TAG .
   rules :
-    # Only build and push image if we are merging into develop. 
+    # Test docker build on MR into develop branch.
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
 
 
@@ -65,7 +65,7 @@ build-push-docker-image:
     - DOCKER_BUILDKIT=1 docker build --ssh churn_ssh=/tmp/.ssh/id_ed25519 -t $IMAGE_NAME:$IMAGE_TAG .
     - docker push $IMAGE_NAME:$IMAGE_TAG
   rules :
-    # Only push image to registry on push of develop branch. 
+    # Build & push image to registry on push of develop or main branches.
     - if: $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "main"
 
 
@@ -86,6 +86,6 @@ deployment-kubernetes:
     - echo "deploy image " $IMAGE_NAME $IMAGE_TAG
     - kubectl set image deployment/chaos-1-deployment churn-api=$IMAGE_NAME:$IMAGE_TAG
   rules:
-    # Only deploy if the MR is comming from develop to main.
+    # Only deploy on push main branch.
   - if: $CI_COMMIT_BRANCH == "main"
 
