@@ -3,10 +3,10 @@ from chaos.infrastructure.customer_loader import CustomerLoader
 from chaos.application.server import app
 from fastapi.testclient import TestClient
 import pandas as pd
-import datetime
+import numpy as np
 
 expected_data = {"ID_CLIENT": [15688172],
-                 "DATE_ENTREE": [datetime.date(2015, 6, 1)],
+                 "DATE_ENTREE": [np.datetime64("2015-06-01")],
                  "NOM": ["Tai"],
                  "PAYS": ["Espagne"],
                  "SEXE": ["H"],
@@ -33,7 +33,7 @@ class TestCustomerLoader:
     def test_load_all_customer_data(self):
         customer_loader = CustomerLoader()
         all_raw_data = customer_loader.load_all_customer_raw()
-        assert all_raw_data.shape == (9950, 13)
+        assert all_raw_data.shape == (199, 13)
 
     def test_find_a_specific_customer(self):
         customer_loader = CustomerLoader()

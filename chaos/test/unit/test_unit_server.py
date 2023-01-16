@@ -4,6 +4,8 @@ from fastapi.testclient import TestClient
 from sklearn.metrics import f1_score
 from chaos.domain.customer import ModelNotLoaded
 from chaos.application.server import HTTP_INTERNAL_SERVER_ERROR
+from sqlalchemy.exc import OperationalError
+
 
 class TestServer(object):
 
@@ -35,3 +37,17 @@ class TestServer(object):
         with TestClient(app) as client:
             response = client.post("/detect/", json={"BALANCE": 0})
             assert response.status_code == HTTP_INTERNAL_SERVER_ERROR
+
+    def test_missing_sql_connexion(self, monkeypatch):
+        """Check error status if sql database is missing."""
+        def _sql_not_found(query, engine):
+            raise OperationalError(None, None, None)
+
+        monkeypatch.setattr("chaos.infrastructure.customer_loader.pd.read_sql",
+                            _sql_not_found)
+
+        with TestClient(app) as client:
+            response = client.get("/customer/11")
+            print(response.json())
+            assert response.status_code == HTTP_INTERNAL_SERVER_ERROR
+            assert response.json().get('message') == 'No SQL connection'
