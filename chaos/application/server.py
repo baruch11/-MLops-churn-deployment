@@ -140,14 +140,10 @@ async def request_middleware(request, call_next):
     request_id = str(uuid.uuid4())
     with logger.contextualize(request_id=request_id):
         logger.info("Request started")
-
-        try:
-            response = await call_next(request)
-
-        finally:
-            logger.info(f"Request status code : {response.status_code}")
-            logger.info("Request ended")
-            return response
+        response = await call_next(request)
+        logger.info(f"Request status code : {response.status_code}")
+        logger.info("Request ended")
+        return response
 
 
 @app.on_event("startup")
