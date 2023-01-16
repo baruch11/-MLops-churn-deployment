@@ -89,7 +89,7 @@ functional-test:
     - docker-compose run --volume `pwd`/chaos/test/data:/usr/app/chaos/test/data api bash -c "sleep 10 && python3 /usr/app/utils/postgres_manager.py && pytest ./chaos/test"
   rules :
     # Only pull and run functional tests if merging into develop
-    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
 
 
 deployment-kubernetes:
