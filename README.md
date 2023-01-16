@@ -52,8 +52,9 @@ export GOOGLE_APPLICATION_CREDENTIALS=<path to json of the service account priva
 export SSH_PRIVATE_KEY=<path_to_shh_key> # Gitlab ssh key needed to import churn repo
 make containerize-and-run-tests
 ```
-### Build :
-If you just want to build your app into an image :
+
+### Build the app:
+Exactly the same than build and run, but it don't run. 
 ```
 export GOOGLE_APPLICATION_CREDENTIALS=<path to json of the service account private key>
 export SSH_PRIVATE_KEY=<path_to_shh_key> # Gitlab ssh key needed to import churn repo
@@ -150,70 +151,18 @@ gcs:
 ### Local installation :
 In order to not affect production data, in local environments we will work with a postgres container emulating bdd. 
 We need to build and launch the containers, and to add data to it.
-#### Launch Docker compose.
-First launch the following  docker compose build command:
-- `DOCKER_BUILDKIT=1 docker compose build --ssh churn_ssh=**your/path/to/ssh_churn_key**`
-Then start the containers using. 
-- `docker compose up` 
-You will have 2 containers running, the churn api, and a postgres db on port 5442. 
-If you are working with it for the first time, you need to upload datasets 1_-_customers.csv, and  1_-_indicators.csv into the bdd.
-#### Connect to postgres.
-First : Open a terminal, and connect to the postgres sql bdd using :
-- `psql -h 127.0.0.1 -p 5442 -U postgres`
-(Default password will be postgres). The prompt will display `postgres=# `
-Then create a db called `churnapi`
-Press enter 5 times
-Then create db :
-- `CREATE DATABASE churnapi;`
 
-#### Connect to churnapi database:
-
-- `\c churnapi`
-
-#### Create a table name customer.
-```
-CREATE TABLE customer (
-  ID_CLIENT SERIAL,
-  DATE_ENTREE DATE,
-  NOM VARCHAR(70),
-  PAYS VARCHAR(50),
-  SEXE VARCHAR(10),
-  AGE SERIAL,
-  MEMBRE_ACTIF VARCHAR(10),
-  PRIMARY KEY (ID_CLIENT)
-);
-```
-#### Append data from csv.
+#### Run postgres bdd :
+First don't forget previous export : 
+```export GOOGLE_APPLICATION_CREDENTIALS=./proxy/gcp_key.json```
+And then launch bdd container only !!
+```make containerize-and-start-bdd```
+#### Insert test csv data into postgres database: 
+If this is the first time you create locally this bdd, you need to insert csv data to play with.
+In a new shell,launch the following code : 
+(PS : if you want to give custom test_sample_customer and test_sample_indicators filepath, you can use the "-c" and "-i" options of this util.)
 
 ```
-\COPY customer(ID_CLIENT, DATE_ENTREE, NOM, PAYS, SEXE, AGE, MEMBRE_ACTIF) FROM '**your/path/to/1_-_customers.csv**' DELIMITER ';' CSV HEADER;
+python3 utils/postgres_manager.py
 ```
-
-#### Check your data.
-```
-SELECT * FROM customer;
-```
-#### Create a table named indicators :
-```
-CREATE TABLE indicators (
-  ID_CLIENT SERIAL,
-  BALANCE FLOAT,
-  NB_PRODUITS INT,
-  CARTE_CREDIT VARCHAR(10),
-  SALAIRE FLOAT,
-  SCORE_CREDIT FLOAT,
-  CHURN VARCHAR(10),
-  PRIMARY KEY (ID_CLIENT)
-);
-```
-
-#### Append data from csv.
-
-```
-\COPY indicators(ID_CLIENT, BALANCE, NB_PRODUITS, CARTE_CREDIT, SALAIRE, SCORE_CREDIT, CHURN) FROM '**your/path/to/1_-_indicators.csv**' DELIMITER ';' CSV HEADER;
-```
-
-#### Check your data.
-```
-SELECT * FROM indicators;
-```
+After this operation don't forget to kill the previous shell with db running, and then you can build and launch your app, or launch unit and functional tests. See the section Docker : build and run, or run all tests.
