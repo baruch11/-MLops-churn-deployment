@@ -1,5 +1,32 @@
 import pandas as pd
+import datetime
 from chaos.infrastructure.connexion import Connexion
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String, Date, Float, TIMESTAMP
+
+
+Base = declarative_base()
+# DATA MODEL :
+
+
+class historicize(Base):
+    __tablename__ = 'historicize'
+
+    ID_CLIENT = Column(Integer, primary_key=True)
+    DATE_ENTREE = Column(Date)
+    NOM = Column(String(70))
+    PAYS = Column(String(50))
+    SEXE = Column(String(10))
+    AGE = Column(Integer)
+    MEMBRE_ACTIF = Column(String(10))
+    BALANCE = Column(Float)
+    NB_PRODUITS = Column(Integer)
+    CARTE_CREDIT = Column(String(10))
+    SALAIRE = Column(Float)
+    SCORE_CREDIT = Column(Float)
+    CHURN = Column(Float)
+    CALL_TIMESTAP = Column(TIMESTAMP)
+
 
 class CustomerLoader:
 
@@ -63,3 +90,11 @@ class CustomerLoader:
         result_query= pd.read_sql(query, self.engine)
         result_=result_query['result'].values.tolist()[0]
         return result_ == "Client ID exists"
+
+    def historicize_api_calls(self, customer_input, prediction):
+        """ This function is used to store each prediction api calls into
+        the table historicize. Those data could then be used by data drifting
+        detectors to monitor and detect drift on data distribution.
+        """
+        current_time = datetime.datetime.now()
+        pass
