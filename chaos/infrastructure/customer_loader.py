@@ -1,7 +1,8 @@
 import pandas as pd
+import datetime
 from chaos.infrastructure.connexion import Connexion
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Date, Float
+from sqlalchemy import Column, Integer, String, Date, Float, TIMESTAMP
 
 
 Base = declarative_base()
@@ -24,6 +25,7 @@ class historicize(Base):
     SALAIRE = Column(Float)
     SCORE_CREDIT = Column(Float)
     CHURN = Column(Float)
+    CALL_TIMESTAP = Column(TIMESTAMP)
 
 
 class CustomerLoader:
@@ -94,5 +96,5 @@ class CustomerLoader:
         the table historicize. Those data could then be used by data drifting
         detectors to monitor and detect drift on data distribution.
         """
-
+        current_time = datetime.datetime.now()
         pass
