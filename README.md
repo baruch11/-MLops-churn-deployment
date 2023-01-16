@@ -132,10 +132,11 @@ And then launch bdd container only !!
 ```make containerize-and-start-bdd```
 #### Insert test csv data into postgres database: 
 If this is the first time you create locally this bdd, you need to insert csv data to play with.
-In a new shell,add two environment variable, and launch the following make command :
+In a new shell,launch the following code : 
+(PS : if you want to give custom test_sample_customer and test_sample_indicators filepath, you can use the "-c" and "-i" options of this util.)
+
 ```
-export TEST_SAMPLE_CUSTOMER_PATH=path/to/test_sample_customer.csv
-export TEST_SAMPLE_INDICATORS_PATH=path/to/test_sample_indicators.csv
-make initialize-bdd 
+python3 utils/postgres_manager.py
 ```
-After this operation don't forget to kill the previous shell with db running, and then you can build and launch your app, see the section Docker : build and run.
+
+After this operation don't forget to kill the previous shell with db running, and then you can build and launch your app, or launch unit and functional tests. See the section Docker : build and run, or run all tests.

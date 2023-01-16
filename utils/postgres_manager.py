@@ -8,10 +8,12 @@ import pandas as pd
 parser = argparse.ArgumentParser()
 parser.add_argument("-c", "--customer",
                     help="Provide your personal test sample customer.csv file\
-                         to feed database ")
+                         to feed database ",
+                    default="./chaos/test/data/test_sample_customer.csv")
 parser.add_argument("-i", "--indicators",
                     help="Provide your personal test sample indicators.csv \
-                    file to feed database ")
+                    file to feed database ",
+                    default="./chaos/test/data/test_sample_indicators.csv")
 args = parser.parse_args()
 
 if (args.indicators is None or args.customer is None):
