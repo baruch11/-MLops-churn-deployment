@@ -78,8 +78,6 @@ class BddCustomerOutput(BaseModel):
     SCORE_CREDIT: float
     CHURN: str
 
-
-
 app = FastAPI(
     title="🚀 Churn detection",
     description=description,
