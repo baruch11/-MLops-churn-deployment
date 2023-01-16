@@ -2,7 +2,7 @@
 stages:
   - test
   - build
-  - push_image
+  - build_push
   - deployment
 
 variables:
@@ -25,8 +25,6 @@ unit-test:
     - source .venv/bin/activate
   script:
     - pytest chaos/test/unit
-    - echo $CI_MERGE_REQUEST_TARGET_BRANCH_NAME 
-    - echo $CI_COMMIT_BRANCH
   rules:
     # We don't launch unit-tests if merging into main, all other cases are ok
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" 
@@ -35,8 +33,7 @@ unit-test:
     - when: on_success
 
 
-
-build-docker-image:
+.build-docker-common: &build_cfg
   stage: build
   image: docker:latest
   services:
@@ -44,46 +41,32 @@ build-docker-image:
 
   before_script:
     - echo "build docker image"
-    - echo $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
-    - echo $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
-    - echo $CI_COMMIT_BRANCH
     - echo "image " $IMAGE_NAME $IMAGE_TAG
     # We need to create the folder /tmp because using the docker --ssh, the "~" characeter didn't work 
     - mkdir /tmp/.ssh && ssh-keyscan gitlab.com >> /tmp/.ssh/known_hosts
     - echo "$SSH_CHURN_ACCESS" > /tmp/.ssh/id_ed25519 && chmod 600 /tmp/.ssh/id_ed25519
     - cat $GCP_SA_KEY | docker login -u _json_key --password-stdin https://$REGISTRY_HOST
+
+
+build-docker-image:
+  <<: *build_cfg
+  stage: build
   script:
     - DOCKER_BUILDKIT=1 docker build --ssh churn_ssh=/tmp/.ssh/id_ed25519 -t $IMAGE_NAME:$IMAGE_TAG .
-    - docker push $IMAGE_NAME:$IMAGE_TAG
   rules :
     # Only build and push image if we are merging into develop. 
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
-          || $CI_COMMIT_BRANCH == "develop"
 
 
-push-docker-image:
-  stage: push_image
-  image: docker:latest
-  services:
-  - docker:20.10.16-dind
-
-  before_script:
-    - echo "push docker"
-    - echo $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
-    - echo $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
-    - echo $CI_COMMIT_BRANCH
-
-    # We need to create the folder /tmp because using the docker --ssh, the "~" characeter didn't work 
-    - mkdir /tmp/.ssh && ssh-keyscan gitlab.com >> /tmp/.ssh/known_hosts
-    - echo "$SSH_CHURN_ACCESS" > /tmp/.ssh/id_ed25519 && chmod 600 /tmp/.ssh/id_ed25519
-    - cat $GCP_SA_KEY | docker login -u _json_key --password-stdin https://$REGISTRY_HOST
+build-push-docker-image:
+  <<: *build_cfg
+  stage: build_push
   script:
     - DOCKER_BUILDKIT=1 docker build --ssh churn_ssh=/tmp/.ssh/id_ed25519 -t $IMAGE_NAME:$IMAGE_TAG .
     - docker push $IMAGE_NAME:$IMAGE_TAG
-    - echo "image " $IMAGE_NAME $IMAGE_TAG
   rules :
     # Only push image to registry on push of develop branch. 
-    - if: $CI_COMMIT_BRANCH == "develop"
+    - if: $CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "main"
 
 
 deployment-kubernetes:
@@ -100,11 +83,9 @@ deployment-kubernetes:
     - gcloud auth activate-service-account --key-file=$GCP_SA_KEY --project=coyotta-2022
     - gcloud container clusters get-credentials ml-prod-coyotta-2022-gke  --region=europe-west1-b
   script:
-    - echo $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
-    - echo $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
-    - echo "image " $IMAGE_NAME $IMAGE_TAG
+    - echo "deploy image " $IMAGE_NAME $IMAGE_TAG
     - kubectl set image deployment/chaos-1-deployment churn-api=$IMAGE_NAME:$IMAGE_TAG
   rules:
     # Only deploy if the MR is comming from develop to main.
-  - if: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME == "develop" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
+  - if: $CI_COMMIT_BRANCH == "main"
 

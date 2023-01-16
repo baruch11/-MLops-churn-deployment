@@ -84,11 +84,11 @@ kubectl create secret generic chaos-secrets-1 --from-file=key.json=<path to json
 
 |Steps  |CI/CD jobs  |Trigger |
 |--|--|--|
-|push feature branch|unit-test|Developper|
-|MR into develop branch|- unit-test<br>- build docker|Developper|
-|Push develop branch|- unit-test<br>- build docker<br>- push to registry|Gitlab on MR success|
-|MR into main branch|deployment|Developper|
-|Push main branch||Gitlab on MR success|
+|push feature branch|- unit tests|Developper|
+|MR into develop branch|- unit tests<br>- build docker|Developper|
+|Push develop branch|- unit tests<br>- build docker<br>- push image to registry|Gitlab on MR success|
+|MR into main branch|- functionnal tests|Developper|
+|Push main branch|- build & push image<br>- deployment|Gitlab on MR success|
 
 
 #### Job view
@@ -96,10 +96,11 @@ kubectl create secret generic chaos-secrets-1 --from-file=key.json=<path to json
 
 |CI/CD jobs  |Triggers  |
 |--|--|
-|unit-test  |- push feature branch<br>- MR into develop branch<br>- push develop branch|
-|build-docker|- MR into develop branch<br>- push develop branch|
-|push-to-registry|- push develop branch|
-|deployment|- MR into main branch|
+|unit tests  |- push feature branch<br>- MR into develop branch<br>- push develop branch|
+|build docker|- MR into develop branch<br>- push develop branch<br>- push main branch|
+|push image to registry|- push develop branch<br>- push main branch|
+|functional tests|MR into main branch|
+|deployment|- push main branch|
 
 
 
