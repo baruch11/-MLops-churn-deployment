@@ -12,7 +12,8 @@
 >
 > https://gitlab.com/yotta-academy/mle-bootcamp/projects/ml-project/project-1-fall-2022/churn-modelling-salima-charles-emeric
 
-
+### *Check our project's technical documentation at*
+ > http://34.140.247.33:8000/sphinx/
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
@@ -283,4 +284,56 @@ api:
 gcs:
   bucket: "chaos-1"
   blob: "model/ChurnModelFinal.pkl"
+```
+
+### Project's Arborescence 
+
+```
+.
+├── chaos
+│   ├── application
+│   │   └── server.py
+│   ├── domain
+│   │   └── customer.py
+│   ├── infrastructure
+│   │   ├── config
+│   │   │   └── config.py
+│   │   ├── connexion.py
+│   │   └── customer_loader.py
+│   └── test
+│       ├── conftest.py
+│       ├── data
+│       │   ├── test_sample_customer.csv
+│       │   └── test_sample_indicators.csv
+│       ├── functional
+│       │   ├── test_bdd.py
+│       │   └── test_whole_api.py
+│       └── unit
+│           ├── test_customer.py
+│           └── test_unit_server.py
+├── coverage
+│   └── coverage.txt
+├── deployment
+│   ├── deployment.yml
+│   └── load_balancer.yml
+├── docker-compose.yml
+├── Dockerfile
+├── docs
+│   ├── _build
+│   ├── conf.py
+│   ├── index.rst
+│   ├── make.bat
+│   ├── Makefile
+│   ├── _static
+│   └── _templates
+├── images
+│   └── churn.png
+├── Makefile
+├── poetry.lock
+├── proxy
+├── pyproject.toml
+├── README.md
+├── setup.py
+└── utils
+    └── postgres_manager.py
 ```
