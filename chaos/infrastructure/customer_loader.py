@@ -6,7 +6,6 @@ from sqlalchemy import Column, Integer, String, Date, Float, TIMESTAMP
 from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
-# DATA MODEL :
 
 
 class Historicize(Base):
@@ -66,6 +65,7 @@ class CustomerLoader:
         -------
         data : pd.Dataframe
                complete data 
+
         """
 
         query = "SELECT customer.ID_CLIENT, DATE_ENTREE, NOM, PAYS, SEXE, AGE,\
