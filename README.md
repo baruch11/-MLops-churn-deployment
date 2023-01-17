@@ -48,6 +48,7 @@
     - [API config files](#api-config-files)
         - [Access to Gcloud SQL](#access-to-gcloud-sql)
         - [docker-compose use case](#docker-compose-use-case)
+    - [Project's Arborescence](#projects-arborescence)
 
 <!-- markdown-toc end -->
 
@@ -286,7 +287,7 @@ gcs:
   blob: "model/ChurnModelFinal.pkl"
 ```
 
-### Project's Arborescence 
+## Project's Arborescence 
 
 ```
 .
