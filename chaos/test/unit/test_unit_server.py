@@ -9,7 +9,8 @@ from sqlalchemy.exc import OperationalError
 
 class TestServer(object):
 
-    def perf_test_api(self, use_local_pkl):
+    def perf_test_api(self, use_local_pkl, mock_customer_loader_historicize):
+
         with TestClient(app) as client:
             EXPECTED_F1_SCORE = 0.61
             X_test, y_test = get_test_set()
@@ -38,7 +39,7 @@ class TestServer(object):
             response = client.post("/detect/", json={"BALANCE": 0})
             assert response.status_code == HTTP_INTERNAL_SERVER_ERROR
 
-    def test_missing_sql_connexion(self, monkeypatch):
+    def test_missing_sql_connexion(self, use_local_pkl, monkeypatch):
         """Check error status if sql database is missing."""
         def _sql_not_found(query, engine):
             raise OperationalError(None, None, None)
@@ -48,6 +49,5 @@ class TestServer(object):
 
         with TestClient(app) as client:
             response = client.get("/customer/11")
-            print(response.json())
             assert response.status_code == HTTP_INTERNAL_SERVER_ERROR
             assert response.json().get('message') == 'No SQL connection'
