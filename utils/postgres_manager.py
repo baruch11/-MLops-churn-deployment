@@ -1,6 +1,7 @@
 import logging, argparse
 from sqlalchemy import create_engine
 from chaos.infrastructure.config.config import config
+from chaos.infrastructure.customer_loader import Base, Historicize
 from sqlalchemy.types import Integer, Text, String, Date
 import pandas as pd
 
@@ -69,6 +70,9 @@ class PostgresManager:
             con.execute(f"CREATE DATABASE {self.database}")
 
     def add_csv_data(self):
+        # This new line permit adding the new table historicize using \
+        # ORM method.
+        Base.metadata.create_all(self.engine, checkfirst=True)
         df_indicators = pd.read_csv(self.PATH_TO_INDICATORS_CSV)
         # We put index into lower case due to postgres syntax
         df_indicators.columns = df_indicators.columns.str.lower()
