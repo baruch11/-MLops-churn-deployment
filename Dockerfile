@@ -16,7 +16,17 @@ COPY --from=requirements-stage /tmp/requirements.txt /usr/app/requirements.txt
 RUN --mount=type=ssh,id=churn_ssh\
     pip install --no-cache-dir --upgrade -r /usr/app/requirements.txt
 
+RUN sphinx-build --version
+RUN apt -y install make
+
 COPY . /usr/app/
+
+
+WORKDIR /usr/app/docs
+RUN sphinx-apidoc -o . ../chaos/
+RUN mkdir -p _build/
+RUN make clean html
+
 WORKDIR /usr/app/
 
 EXPOSE 8000
