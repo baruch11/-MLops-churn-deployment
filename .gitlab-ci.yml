@@ -25,7 +25,15 @@ unit-test:
     - poetry install
     - source .venv/bin/activate
   script:
-    - pytest chaos/test/unit
+    - coverage run --source=chaos.domain,chaos.infrastructure,chaos.application -m pytest chaos/test/unit/
+    - coverage report
+    - coverage xml
+  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
   rules:
     # We don't launch unit-tests if merging into main, all other cases are ok
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" 
