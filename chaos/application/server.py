@@ -112,6 +112,7 @@ else:
 
 @app.exception_handler(ModelNotLoaded)
 async def _module_not_found_handler(request: Request, exc: ModelNotLoaded):
+    """Handle exception when model is not loaded."""
     logger.error("Churn is not loaded")
     return JSONResponse(
         status_code=HTTP_INTERNAL_SERVER_ERROR,
@@ -119,17 +120,20 @@ async def _module_not_found_handler(request: Request, exc: ModelNotLoaded):
 
 @app.exception_handler(OperationalError)
 async def _postgressql_connexion__handler(request: Request, exc: OperationalError):
+    """Handle exception due to missing connexion to SQL DB."""
     logger.error("SQL connection not found")
     return JSONResponse(
         status_code=HTTP_INTERNAL_SERVER_ERROR,
         content={'message': "No SQL connection"})
 
 class UnicornException(Exception):
+    """Missing customer id exception."""
     def __init__(self, customer_id:int):
         self.customer_id =customer_id
 
 @app.exception_handler(UnicornException)
 async def unicorn_exception_handler(request: Request, exc: UnicornException):
+    """Handle exception due to missing customer id in the SQL DB."""
     logger.error(f"Client ID {exc.customer_id} not found")
     return JSONResponse(status_code = HTTP_NOT_FOUND,
                         content = {'message' : f"Client ID {exc.customer_id} not found" })
@@ -144,8 +148,11 @@ class Answer(BaseModel):
 CHURN_MODEL_NOT_FOUND = -1
 CHURN_MODEL = None
 
+
 @app.middleware("http")
 async def request_middleware(request, call_next):
+    """Log every requests.
+    """
     request_id = str(uuid.uuid4())
     with logger.contextualize(request_id=request_id):
         logger.info("Request started")
@@ -157,7 +164,7 @@ async def request_middleware(request, call_next):
 
 @app.on_event("startup")
 async def startup_event():
-    """Load model just once."""
+    """Load model just once at startup."""
     global CHURN_MODEL
     CHURN_MODEL = None
     try:
@@ -174,6 +181,11 @@ def detect(customer_input: CustomerInput):
     ----------
     customer_input : CustomerInput(BaseModel)
         Customer marketing characterics
+
+    Returns
+    -------
+    Answer (dict like)
+        probabilty of churn
     """
     customer = Customer(customer_input.dict(), CHURN_MODEL)
     answer = customer.predict_subscription()
@@ -186,7 +198,19 @@ def detect(customer_input: CustomerInput):
 
 @app.get("/customer/{customer_id}", tags=["read id"])
 def read_item(customer_id):
-    result_ = CustomerLoader().does_the_ID_exist(customer_id)    
+    """Get the customer characteristics from its ID.
+
+    Parameters
+    ----------
+    customer_id : int
+        client ID
+
+    Returns
+    -------
+    BddCustomerOutput (dict like)
+          customer characteristics
+    """
+    result_ = CustomerLoader().does_the_ID_exist(customer_id)
     if not result_:
         raise UnicornException(customer_id=customer_id)
     customer_loader = CustomerLoader()
@@ -195,14 +219,20 @@ def read_item(customer_id):
     bdd_customer_output = BddCustomerOutput(**dict_prospect)
     return bdd_customer_output
 
+
 @app.get("/customer_detect/{customer_id}", tags=["detect from id"])
 def detect_item(customer_id):
     """Detect churn from customer id.
 
     Parameters
     ----------
-    customer_id : client ID
+    customer_id : int
+        client ID
 
+    Returns
+    -------
+    Answer (dict like)
+        probabilty of churn
     """
     result_ = CustomerLoader().does_the_ID_exist(customer_id)
     if not result_:
