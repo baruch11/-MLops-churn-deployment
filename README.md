@@ -31,10 +31,31 @@ make run-server
 #### Try the API at adress :  
 - http://0.0.0.0:8000/docs
 
+
+## Testing
+
+### unit tests and check coverage
+
+`make coverage-unit`
+
+Then check the coverage of the unit tests in coverage/coverage.txt.  
+NB: the functional tests improve this coverage.
+
+### Model performance
+
+`make run-perf-tests`
+
+This test check that the final api performance is equal to the expected f1 score.
+
+### Functionnal tests
+
+Check the section [run all tests](#run-all-tests)
+
+
 ## Docker image 
 If you want to containerize locally your code and run it you can do the following :
 
-### build and run:
+### build and run
 Make sure your **GOOGLE_APPLICATION_CREDENTIALS** is set before runing image.
 ```
 export GOOGLE_APPLICATION_CREDENTIALS=<path to json of the service account private key>
@@ -43,7 +64,7 @@ make containerize-and-start-app
 ```
 This command will build an image of your application, the tag of the image will be the short git sha1. It will create a local postgres sql bdd and the app will request on it. **Don't forget to add the csv data if this is the first time**
 
-### run all tests:
+### run all tests
 The following command will enable you to build all the required environment to run unit tests, and functional tests.
 Functional tests are very important because they enable you to try your application working on real elements. (Real bdd, real model etc)
 In order to preserve production bdd performance, we build a local database (Postgres SQL) with docker. So don't forget to add the csv data!!. 
@@ -53,7 +74,7 @@ export SSH_PRIVATE_KEY=<path_to_shh_key> # Gitlab ssh key needed to import churn
 make containerize-and-run-tests
 ```
 
-### Build the app:
+### Build the app
 Exactly the same than build and run, but it don't run. 
 ```
 export GOOGLE_APPLICATION_CREDENTIALS=<path to json of the service account private key>
@@ -61,7 +82,7 @@ export SSH_PRIVATE_KEY=<path_to_shh_key> # Gitlab ssh key needed to import churn
 make build-docker-image
 ```
 
-### Push your image in google container registry:
+### Push your image in google container registry
 If you want to push your generated image directly to Google Container Registry without working with CI-CD, this is possible. 
 Simply do :
 ```

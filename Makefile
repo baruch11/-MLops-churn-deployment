@@ -51,3 +51,5 @@ postgres-connexion:
 					 user=coyotta-2022-group-1"
 
 
+run-perf-tests:
+	pytest chaos/test/unit -o python_functions='perf_'
