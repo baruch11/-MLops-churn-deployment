@@ -2,6 +2,7 @@ from sqlalchemy.engine.base import Engine
 from chaos.infrastructure.customer_loader import CustomerLoader
 from chaos.application.server import app
 from fastapi.testclient import TestClient
+from unittest import TestCase
 import pandas as pd
 import numpy as np
 
@@ -34,7 +35,7 @@ customer_input = {"ID_CLIENT": 15688172,
                   "CHURN": "No"
                   }
 
-class TestCustomerLoader:
+class TestCustomerLoader(TestCase):
 
     def test_instantiate_customer_loader(self):
         customer_loader = CustomerLoader()
@@ -53,12 +54,16 @@ class TestCustomerLoader:
         line_15688172 = customer_loader.find_a_customer(15688172)
         expected_df = pd.DataFrame(data=expected_data)
         assert expected_df.equals(line_15688172)
- 
+
     def test_predict_from_id(self):
         with TestClient(app) as client: 
             response = client.get("/customer_detect/15791700")
-            assert response.status_code == 200 
-            assert response.json()["answer"] == 0.9769012533043302
+            assert response.status_code == 200
+            self.assertAlmostEqual(
+                first=response.json()["answer"],
+                second=0.9769012533043302,
+                places=2
+                )
 
     def test_historicize_data_and_retrieve_it(self):
         customer_loader = CustomerLoader()

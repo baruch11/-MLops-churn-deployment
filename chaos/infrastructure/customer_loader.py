@@ -88,14 +88,27 @@ class CustomerLoader:
                         THEN  'Client ID exists'\
                         ELSE  'Client ID does not exist' \
                         END AS result;"
-        result_query= pd.read_sql(query, self.engine)
-        result_=result_query['result'].values.tolist()[0]
+        result_query = pd.read_sql(query, self.engine)
+        result_ = result_query['result'].values.tolist()[0]
         return result_ == "Client ID exists"
 
-    def historicize_api_calls(self, customer_input: dict, prediction: float) -> None :
+    def historicize_api_calls(
+            self,
+            customer_input: dict,
+            prediction: pd.Series) -> None:
+
         """ This function is used to store each prediction api calls into
         the table historicize. Those data could then be used by data drifting
         detectors to monitor and detect drift on data distribution.
+
+         Parameters
+        ----------
+        customer_input : dict
+                      customer data dict. 
+
+        prediction : pd.Series
+                        model prediction for the customer_input variable
+
         """
         current_time = datetime.datetime.now()
         historicize_dict = customer_input

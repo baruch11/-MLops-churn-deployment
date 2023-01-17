@@ -39,7 +39,7 @@ class TestServer(object):
             response = client.post("/detect/", json={"BALANCE": 0})
             assert response.status_code == HTTP_INTERNAL_SERVER_ERROR
 
-    def test_missing_sql_connexion(self, monkeypatch):
+    def test_missing_sql_connexion(self, use_local_pkl, monkeypatch):
         """Check error status if sql database is missing."""
         def _sql_not_found(query, engine):
             raise OperationalError(None, None, None)
