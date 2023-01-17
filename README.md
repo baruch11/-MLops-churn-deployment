@@ -1,8 +1,8 @@
 # Chaos
 
 <p align="center">
-    <img src="images/churn.png" 
-        width="500" 
+    <img src="images/churn.png"
+        width="500"
         height="250"  />
 </p>
 
