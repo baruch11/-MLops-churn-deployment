@@ -6,9 +6,11 @@ from chaos.domain.customer import Customer, load_churn_model, ModelNotLoaded
 from chaos.infrastructure.customer_loader import CustomerLoader
 from typing import Optional, Literal
 from datetime import datetime, date
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.exc import OperationalError
 import loguru
 import uuid
+import os
 
 description = """
 ### Churn detection API will help you to detect churners. 🚀
@@ -100,6 +102,13 @@ logger.add('logs/logs.logs', format="{time} - {level} - ({extra[request_id]}) {m
 
 HTTP_NOT_FOUND = 404
 HTTP_INTERNAL_SERVER_ERROR = 500
+
+isExist = os.path.exists("docs/_build/html")
+if not isExist:
+    os.makedirs("docs/_build/html")
+    app.mount("/sphinx", StaticFiles(directory="docs/_build/html", html=True), name="sphinx")
+else:
+    app.mount("/sphinx", StaticFiles(directory="docs/_build/html", html=True), name="sphinx")
 
 @app.exception_handler(ModelNotLoaded)
 async def _module_not_found_handler(request: Request, exc: ModelNotLoaded):

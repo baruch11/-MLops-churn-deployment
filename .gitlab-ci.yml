@@ -55,8 +55,7 @@ unit-test:
     - mkdir /tmp/.ssh && ssh-keyscan gitlab.com >> /tmp/.ssh/known_hosts
     - echo "$SSH_CHURN_ACCESS" > /tmp/.ssh/id_ed25519 && chmod 600 /tmp/.ssh/id_ed25519
     - cat $GCP_SA_KEY | docker login -u _json_key --password-stdin https://$REGISTRY_HOST
-
-
+    - echo "$CONFIG_YML" > chaos/infrastructure/config/config.yml
 
 build-docker-image:
   <<: *build_cfg
