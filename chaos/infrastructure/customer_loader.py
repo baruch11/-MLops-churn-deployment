@@ -60,7 +60,13 @@ class CustomerLoader:
         return raw_customer
 
     def load_all_customer_raw(self):
-        """Query the database to load complete data"""
+        """Query the database to load complete data
+
+        Returns
+        -------
+        data : pd.Dataframe
+               complete data 
+        """
 
         query = "SELECT customer.ID_CLIENT, DATE_ENTREE, NOM, PAYS, SEXE, AGE,\
              MEMBRE_ACTIF, BALANCE, NB_PRODUITS, CARTE_CREDIT, \
