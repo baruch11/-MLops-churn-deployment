@@ -28,7 +28,6 @@ class Historicize(Base):
     CHURN = Column(Float)
     CALL_TIMESTAP = Column(TIMESTAMP)
 
-
 class CustomerLoader:
 
     def __init__(self):
