@@ -167,9 +167,11 @@ def detect(customer_input: CustomerInput):
         Customer marketing characterics
     """
     customer = Customer(customer_input.dict(), CHURN_MODEL)
-
     answer = customer.predict_subscription()
-
+    # Saving data and model response in the Database : 
+    CustomerLoader().historicize_api_calls(
+        customer_input=customer_input.dict(),
+        prediction=answer.values[0])
     return Answer(answer=answer)
 
 
@@ -201,7 +203,9 @@ def detect_item(customer_id):
     load_customer.drop(columns=['CHURN'])
     dict_customer = load_customer.to_dict(orient="records")[0]
     customer = Customer(dict_customer, CHURN_MODEL)
-
     answer = customer.predict_subscription()
-
+    # Saving data and model response in the Database : 
+    customer_loader.historicize_api_calls(
+        customer_input=dict_customer,
+        prediction=answer.values[0])
     return Answer(answer=answer)
