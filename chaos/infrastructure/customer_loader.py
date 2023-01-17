@@ -26,7 +26,8 @@ class Historicize(Base):
     SALAIRE = Column(Float)
     SCORE_CREDIT = Column(Float)
     CHURN = Column(Float)
-    CALL_TIMESTAP = Column(TIMESTAMP)
+    CALL_TIMESTAMP = Column(TIMESTAMP)
+
 
 class CustomerLoader:
 
@@ -113,7 +114,7 @@ class CustomerLoader:
         historicize_dict = customer_input
         historicize_dict["ID"] = None
         historicize_dict["CHURN"] = prediction
-        historicize_dict["CALL_TIMESTAP"] = current_time
+        historicize_dict["CALL_TIMESTAMP"] = current_time
         historicize = Historicize(**historicize_dict)
         Session = sessionmaker(bind=self.engine)
         session = Session()
