@@ -9,7 +9,7 @@ from sqlalchemy.exc import OperationalError
 
 class TestServer(object):
 
-    def test_perf(self, use_local_pkl):
+    def test_perf(self, use_local_pkl, mock_customer_loader_historicize):
         with TestClient(app) as client:
             EXPECTED_F1_SCORE = 0.61
             X_test, y_test = get_test_set()
@@ -48,6 +48,5 @@ class TestServer(object):
 
         with TestClient(app) as client:
             response = client.get("/customer/11")
-            print(response.json())
             assert response.status_code == HTTP_INTERNAL_SERVER_ERROR
             assert response.json().get('message') == 'No SQL connection'
