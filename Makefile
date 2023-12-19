@@ -54,4 +54,4 @@ postgres-connexion:
 
 
 run-perf-tests:
-	pytest chaos/test/unit -o python_functions='perf_'
+	pytest chaos/test/unit -o python_functions='perf_' -s

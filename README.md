@@ -6,14 +6,8 @@
         height="250"  />
 </p>
 
-> **The current project aims to deploy a churn detection machine learning model** into **production environment**, using some **cloud technologies** such as **Docker** and **Kubernetes**.
->
-> **Original code base for churn detection model is here** :
->
-> https://gitlab.com/yotta-academy/mle-bootcamp/projects/ml-project/project-1-fall-2022/churn-modelling-salima-charles-emeric
+The current project aims to deploy a churn detection machine learning model (repo [here](https://github.com/baruch11/churn-detection)) into a GCP production environment, using some cloud technologies such as Docker and Kubernetes.
 
-### *Check our project's technical documentation at*
- > http://34.140.247.33:8000/sphinx/
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**

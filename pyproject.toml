@@ -1,29 +1,22 @@
 [tool.poetry]
-name = "chaos-1"
+name = "churn-deployment"
 version = "0.1.0"
-description = ""
 authors = ["Salima, Emeric, Charles"]
+description = "web application for churn detection"
 readme = "README.md"
-packages = [{include = "chaos"}]
+packages = [{include = "churn_deployment"}]
 
 [tool.poetry.dependencies]
-python = "^3.9"
-pytest = "^7.2.0"
-fastapi = {extras = ["all"], version = "^0.88.0"}
-sqlmodel = "^0.0.8"
-psycopg2-binary = "^2.9.5"
-scikit-learn = "^1.2.0"
-pandas = "^1.5.2"
-churn-sec = {git = "ssh://git@gitlab.com/yotta-academy/mle-bootcamp/projects/ml-project/project-1-fall-2022/churn-modelling-salima-charles-emeric.git", rev = "v3"}
-pytest-mock = "^3.10.0"
-coverage = "^7.0.0"
-pytest-cov = "^4.0.0"
-google-cloud-storage = "^2.7.0"
-loguru = "^0.6.0"
-llvmlite = "^0.39.1"
-numba = "^0.56.4"
-sphinx = "5.3.0"
-sphinx-rtd-theme = "^1.1.1"
+python = "^3.10"
+churn-sec = {git = "https://github.com/baruch11/churn-detection.git"}
+pytest = "^7.4.3"
+psycopg2 = "^2.9.9"
+sqlalchemy = "^2.0.23"
+fastapi = {extras = ["all"], version = "^0.105.0"}
+google-cloud-storage = "^2.14.0"
+loguru = "^0.7.2"
+scikit-learn = "1.2.0"
+pytest-cov = "^4.1.0"
 
 
 [build-system]

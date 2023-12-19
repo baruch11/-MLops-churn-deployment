@@ -1,32 +1,58 @@
 ============================= test session starts ==============================
-platform linux -- Python 3.9.12, pytest-7.2.0, pluggy-1.0.0
-rootdir: /home/ubuntu/PythonProject/Projet3/chaos-1
-plugins: cov-4.0.0, mock-3.10.0, anyio-3.6.2, dash-2.7.1
-collected 6 items
+platform darwin -- Python 3.10.9, pytest-7.4.3, pluggy-1.3.0
+rootdir: /Users/charlesprat/RepoGit/churn-deployment
+plugins: cov-4.1.0, anyio-3.7.1, dash-2.14.2
+collected 5 items
 
-chaos/test/unit/test_customer.py ...                                     [ 50%]
-chaos/test/unit/test_hello_world.py ..                                   [ 83%]
-chaos/test/unit/test_unit_server.py .                                    [100%]
+chaos/test/unit/test_customer.py ...                                     [ 60%]
+chaos/test/unit/test_unit_server.py ..                                   [100%]
 
----------- coverage: platform linux, python 3.9.12-final-0 -----------
-Name                                             Stmts   Miss  Cover
---------------------------------------------------------------------
-chaos/application/__init__.py                        0      0   100%
-chaos/application/server.py                         68     18    74%
-chaos/application/train_model_for_appetence.py      21     21     0%
-chaos/domain/__init__.py                             0      0   100%
-chaos/domain/customer.py                            37     18    51%
-chaos/infrastructure/__init__.py                     0      0   100%
-chaos/infrastructure/config/config.py               10      1    90%
-chaos/infrastructure/connexion.py                   23      7    70%
-chaos/infrastructure/customer_loader.py             14      7    50%
-chaos/test/conftest.py                              13      0   100%
-chaos/test/unit/test_customer.py                    21      1    95%
-chaos/test/unit/test_hello_world.py                  7      0   100%
-chaos/test/unit/test_unit_server.py                 18      0   100%
---------------------------------------------------------------------
-TOTAL                                              232     73    69%
+=============================== warnings summary ===============================
+chaos/infrastructure/customer_loader.py:8
+  /Users/charlesprat/RepoGit/churn-deployment/chaos/infrastructure/customer_loader.py:8: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    Base = declarative_base()
+
+chaos/application/server.py:165
+  /Users/charlesprat/RepoGit/churn-deployment/chaos/application/server.py:165: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+.venv/lib/python3.10/site-packages/fastapi/applications.py:4547
+  /Users/charlesprat/RepoGit/churn-deployment/.venv/lib/python3.10/site-packages/fastapi/applications.py:4547: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)
+
+chaos/test/unit/test_unit_server.py::TestServer::test_missing_model
+  /Users/charlesprat/RepoGit/churn-deployment/chaos/application/server.py:190: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.5/migration/
+    customer = Customer(customer_input.dict(), CHURN_MODEL)
+
+chaos/test/unit/test_unit_server.py::TestServer::test_missing_model
+  /Users/charlesprat/RepoGit/churn-deployment/.venv/lib/python3.10/site-packages/pydantic/main.py:979: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.5/migration/
+    warnings.warn('The `dict` method is deprecated; use `model_dump` instead.', DeprecationWarning)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+---------- coverage: platform darwin, python 3.10.9-final-0 ----------
+Name                                      Stmts   Miss  Cover
+-------------------------------------------------------------
+chaos/application/__init__.py                 0      0   100%
+chaos/application/server.py                 113     26    77%
+chaos/domain/__init__.py                      0      0   100%
+chaos/domain/customer.py                     37     17    54%
+chaos/infrastructure/__init__.py              0      0   100%
+chaos/infrastructure/config/config.py        10      1    90%
+chaos/infrastructure/connexion.py            23      2    91%
+chaos/infrastructure/customer_loader.py      52     19    63%
+-------------------------------------------------------------
+TOTAL                                       235     65    72%
 Coverage HTML written to dir coverage/htmlcov
 
-
-============================== 6 passed in 27.11s ==============================
+======================== 5 passed, 5 warnings in 0.65s =========================
