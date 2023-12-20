@@ -10,13 +10,15 @@ packages = [{include = "churn_deployment"}]
 python = "^3.10"
 churn-sec = {git = "https://github.com/baruch11/churn-detection.git"}
 pytest = "^7.4.3"
-psycopg2 = "^2.9.9"
 sqlalchemy = "^2.0.23"
 fastapi = {extras = ["all"], version = "^0.105.0"}
 google-cloud-storage = "^2.14.0"
 loguru = "^0.7.2"
 scikit-learn = "1.2.0"
 pytest-cov = "^4.1.0"
+sphinx = "^7.2.6"
+sphinx-rtd-theme = "^2.0.0"
+psycopg2-binary = "^2.9.9"
 
 
 [build-system]
