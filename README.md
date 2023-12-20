@@ -1,4 +1,4 @@
-# Chaos
+# Churn API deployment
 
 <p align="center">
     <img src="images/churn.png"
@@ -12,37 +12,22 @@ The current project aims to deploy a churn detection machine learning model (rep
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
-- [Chaos](#chaos)
-    - [Getting started](#getting-started)
-        - [Install](#install)
-        - [Run API locally](#run-api-locally)
-            - [Setup the configuration](#setup-the-configuration)
-            - [Launch the server](#launch-the-server)
-    - [Docker](#docker)
-        - [build and run](#build-and-run)
-        - [run all tests](#run-all-tests)
-        - [Build the app](#build-the-app)
-        - [Push your image in google container registry](#push-your-image-in-google-container-registry)
-    - [Deployment on Google Kubernetes Engine](#deployment-on-google-kubernetes-engine)
-        - [Deployment overview](#deployment-overview)
-        - [Kubernetes secrets](#kubernetes-secrets)
-    - [Testing](#testing)
-        - [Unit tests and coverage](#unit-tests-and-coverage)
-        - [Model performance](#model-performance)
-        - [Functionnal tests](#functionnal-tests)
-    - [CI/CD](#cicd)
-        - [Workflow](#workflow)
-            - [Integration steps view](#integration-steps-view)
-            - [Job view](#job-view)
-        - [Gitlab variables](#gitlab-variables)
-    - [Local postgres db (test purpose)](#local-postgres-db-test-purpose)
-        - [Run postgres db](#run-postgres-db)
-        - [Insert test datas into postgres db](#insert-test-datas-into-postgres-db)
-        - [Useful psql commands](#useful-psql-commands)
-    - [API config files](#api-config-files)
-        - [Access to Gcloud SQL](#access-to-gcloud-sql)
-        - [docker-compose use case](#docker-compose-use-case)
-    - [Project's Arborescence](#projects-arborescence)
+- [Getting started](#getting-started)
+    - [Install](#install)
+    - [Run API locally](#run-api-locally)
+- [Simplified deployment](#simplified-deployment)
+- [Deployment on Google Kubernetes Engine](#deployment-on-google-kubernetes-engine)
+    - [Deployment overview](#deployment-overview)
+    - [Kubernetes secrets](#kubernetes-secrets)
+    - [build and run](#build-and-run-on-docker)
+    - [run all tests](#run-all-tests)
+    - [Build the app](#build-the-app)
+    - [Push your image in google container registry](#push-your-image-in-google-container-registry)
+- [Testing](#testing)
+- [CI/CD](#cicd)
+- [Local postgres db (test purpose)](#local-postgres-db-test-purpose)
+- [API config files](#api-config-files)
+- [Project's Arborescence](#projects-arborescence)
 
 <!-- markdown-toc end -->
 
@@ -78,14 +63,58 @@ NB: only the _detect_ route will work if there is no sql base running locally. T
 - use the real SQL database through a proxy. Use `make proxy start` command, more help can be found here [proxy SQL connexion](proxy/proxy_SQL_connexion.md)
 
 
+## Simplified deployment
 
-## Docker
+The following instruction covers a simple deployement without load balancing and without sql database support. Just the fastpi app running in a container connected to a google cloud storage. 
+
+### Setup
+
+- You need to give access to docker to your github private key setting the environment variable SSH_PRIVATE_KEY
+- Make sure your **GOOGLE_APPLICATION_CREDENTIALS** is set before runing image.
+- Fill a config.yml file, see [API config files](#api-config-files)
+
+### build docker image
+
+```
+make build-docker-simple
+```
+
+### run docker container locally
+
+```
+make run-app-simple
+```
+The API doc is at adress: http://0.0.0.0:8000/docs
+You can try the detect route.
+
+## Deployment on Google Kubernetes Engine
+
+The churn api is deployed on a kubernetes cluster.  
+The service in deployed in 2 replicas, with one load-balancer and 2 containers (one for the api and one for the proxy allowing access to the sql database).  
+The deployment will have also access to a **Google Cloud Storage** bucket where the pickle model is stored, and a **Google cloud SQL** database to access to the customer datas.
+
+### Deployment overview
+
+<p align="center">
+    <img src="images/deployment.png" 
+        width="900" 
+        height="600"  />
+</p>
+
+### Kubernetes secrets
+
+```
+kubectl create secret generic chaos-secrets-1 \
+	--from-file=key.json=<path to json of the service account private key> \
+	--from-file=<path to the config.yml>
+```
+
+### build and run on docker
 
 If you want to try a full functional api locally, you need to contenerize the api and a postgres db in a docker-compose.
 Here are the steps you can follow for that purpose.  
 Find also details about the local contenerize postgres db setup here : [Local postgres db](#local-postgres-db-test-purpose)
 
-### build and run
 Make sure your **GOOGLE_APPLICATION_CREDENTIALS** is set before runing image.
 ```
 export GOOGLE_APPLICATION_CREDENTIALS=<path to json of the service account private key>
@@ -118,29 +147,6 @@ Simply do :
 ```
 export SHORT_SHA=$(git rev-parse --short=8 HEAD)
 docker push eu.gcr.io/coyotta-2022/chaos-1:$SHORT_SHA
-```
-
-
-## Deployment on Google Kubernetes Engine
-
-The churn api is deployed on a kubernetes cluster.  
-The service in deployed in 2 replicas, with one load-balancer and 2 containers (one for the api and one for the proxy allowing access to the sql database).  
-The deployment will have also access to a **Google Cloud Storage** bucket where the pickle model is stored, and a **Google cloud SQL** database to access to the customer datas.
-
-### Deployment overview
-
-<p align="center">
-    <img src="images/deployment.png" 
-        width="900" 
-        height="600"  />
-</p>
-
-### Kubernetes secrets
-
-```
-kubectl create secret generic chaos-secrets-1 \
-	--from-file=key.json=<path to json of the service account private key> \
-	--from-file=<path to the config.yml>
 ```
 
 
@@ -276,9 +282,13 @@ api:
     port: 8000
     host: 0.0.0.0
 
-gcs:
-  bucket: "chaos-1"
+gcs:  # your gcp storage configuration
+  project: "churn"
+  bucket: "churn_bucket"
   blob: "model/ChurnModelFinal.pkl"
+
+server:
+  historicize: false
 ```
 
 ## Project's Arborescence 
