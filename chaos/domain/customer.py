@@ -61,11 +61,12 @@ def load_churn_model():
     """
     bucket_name = config["gcs"]["bucket"]
     source_blob_name = config["gcs"]["blob"]
+    gcp_project = config["gcs"]["project"]
 
     logging.info("Loading model %s from GCS",
                  bucket_name+"/"+source_blob_name)
 
-    storage_client = storage.Client()
+    storage_client = storage.Client(project=gcp_project)
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(source_blob_name)
 

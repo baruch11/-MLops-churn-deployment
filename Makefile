@@ -14,9 +14,22 @@ coverage-unit:
 run-server:
 	uvicorn chaos.application.server:app --host "0.0.0.0" --port 8000
 
+build-docker-simple:
+	docker build --ssh $(SSH_PRIVATE_KEY) -t churn . --progress=plain
+
+run-app-simple:
+	docker run \
+              --name churn-container \
+	      --env PYTHONPATH=/usr/app/ \
+	      --env GOOGLE_APPLICATION_CREDENTIALS=/usr/app/gcp_creds.json \
+              -v $(GOOGLE_APPLICATION_CREDENTIALS):/usr/app/gcp_creds.json \
+              -v $(shell pwd)/chaos/infrastructure/config/config.yml:/usr/app/chaos/infrastructure/config/config.yml \
+              churn:latest
+
 build-docker-image:
 	export SHORT_SHA=$(SHORT_SHA); \
 	DOCKER_BUILDKIT=1 docker compose build --ssh churn_ssh=$(SSH_PRIVATE_KEY)
+
 
 containerize-and-start-app : ## We are exporting the SHORT_SHA to use it in the compose file. 
 	export SHORT_SHA=$(SHORT_SHA); \

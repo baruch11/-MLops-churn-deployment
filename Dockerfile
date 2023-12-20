@@ -1,16 +1,15 @@
-FROM python:3.9-slim as requirements-stage
+FROM python:3.10-slim as requirements-stage
 
 WORKDIR /tmp
 RUN pip install poetry
+ 
 COPY ./pyproject.toml ./poetry.lock* /tmp/
 RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 
- 
-FROM python:3.9-slim
-
+FROM python:3.10-slim
 
 RUN apt-get -yq update && apt-get -yqq install ssh git
-RUN mkdir ~/.ssh && ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
+RUN mkdir -p ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 COPY --from=requirements-stage /tmp/requirements.txt /usr/app/requirements.txt
 RUN --mount=type=ssh,id=churn_ssh\
