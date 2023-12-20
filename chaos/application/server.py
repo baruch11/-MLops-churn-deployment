@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from chaos.domain.customer import Customer, load_churn_model, ModelNotLoaded
 from chaos.infrastructure.customer_loader import CustomerLoader
+from chaos.infrastructure.config.config import config
 from typing import Optional, Literal
 from datetime import datetime, date
 from fastapi.staticfiles import StaticFiles
@@ -24,6 +25,7 @@ You will be able to:
 * **Read Customer's features from Id** (Route #2).
 * **Detect Churner from Id** (Route #3).
 """
+
 
 class CustomerInput(BaseModel):
     """Churn detection parameters.
@@ -80,25 +82,32 @@ class BddCustomerOutput(BaseModel):
     SCORE_CREDIT: float
     CHURN: str
 
+
 app = FastAPI(
     title="🚀 Churn detection",
     description=description,
-    openapi_tags=[{
-        "name": "detect",
-        "description": ("Give a probability of churn "
-                        "given customer's characteristics")},
-       {"name": "read id",
-        "description": ("Read customer's features from given id")},
-
-       {"name": "detect from id",
-        "description": ("Give a probability of churn " 
-                        "given customer's id")          
-    }]
+    openapi_tags=[
+        {
+            "name": "detect",
+            "description": (
+                "Give a probability of churn " "given customer's characteristics"
+            ),
+        },
+        {"name": "read id", "description": ("Read customer's features from given id")},
+        {
+            "name": "detect from id",
+            "description": ("Give a probability of churn " "given customer's id"),
+        },
+    ],
 )
 
 logger = loguru.logger
 logger.remove()
-logger.add('logs/logs.logs', format="{time} - {level} - ({extra[request_id]}) {message} ", level="DEBUG")
+logger.add(
+    "logs/logs.logs",
+    format="{time} - {level} - ({extra[request_id]}) {message} ",
+    level="DEBUG",
+)
 
 HTTP_NOT_FOUND = 404
 HTTP_INTERNAL_SERVER_ERROR = 500
@@ -106,9 +115,14 @@ HTTP_INTERNAL_SERVER_ERROR = 500
 isExist = os.path.exists("docs/_build/html")
 if not isExist:
     os.makedirs("docs/_build/html")
-    app.mount("/sphinx", StaticFiles(directory="docs/_build/html", html=True), name="sphinx")
+    app.mount(
+        "/sphinx", StaticFiles(directory="docs/_build/html", html=True), name="sphinx"
+    )
 else:
-    app.mount("/sphinx", StaticFiles(directory="docs/_build/html", html=True), name="sphinx")
+    app.mount(
+        "/sphinx", StaticFiles(directory="docs/_build/html", html=True), name="sphinx"
+    )
+
 
 @app.exception_handler(ModelNotLoaded)
 async def _module_not_found_handler(request: Request, exc: ModelNotLoaded):
@@ -116,27 +130,34 @@ async def _module_not_found_handler(request: Request, exc: ModelNotLoaded):
     logger.error("Churn is not loaded")
     return JSONResponse(
         status_code=HTTP_INTERNAL_SERVER_ERROR,
-        content={'message': "Churn model not loaded"})
+        content={"message": "Churn model not loaded"},
+    )
+
 
 @app.exception_handler(OperationalError)
 async def _postgressql_connexion__handler(request: Request, exc: OperationalError):
     """Handle exception due to missing connexion to SQL DB."""
     logger.error("SQL connection not found")
     return JSONResponse(
-        status_code=HTTP_INTERNAL_SERVER_ERROR,
-        content={'message': "No SQL connection"})
+        status_code=HTTP_INTERNAL_SERVER_ERROR, content={"message": "No SQL connection"}
+    )
+
 
 class UnicornException(Exception):
     """Missing customer id exception."""
-    def __init__(self, customer_id:int):
-        self.customer_id =customer_id
+
+    def __init__(self, customer_id: int):
+        self.customer_id = customer_id
+
 
 @app.exception_handler(UnicornException)
 async def unicorn_exception_handler(request: Request, exc: UnicornException):
     """Handle exception due to missing customer id in the SQL DB."""
     logger.error(f"Client ID {exc.customer_id} not found")
-    return JSONResponse(status_code = HTTP_NOT_FOUND,
-                        content = {'message' : f"Client ID {exc.customer_id} not found" })
+    return JSONResponse(
+        status_code=HTTP_NOT_FOUND,
+        content={"message": f"Client ID {exc.customer_id} not found"},
+    )
 
 
 class Answer(BaseModel):
@@ -151,8 +172,7 @@ CHURN_MODEL = None
 
 @app.middleware("http")
 async def request_middleware(request, call_next):
-    """Log every requests.
-    """
+    """Log every requests."""
     request_id = str(uuid.uuid4())
     with logger.contextualize(request_id=request_id):
         logger.info("Request started")
@@ -189,10 +209,11 @@ def detect(customer_input: CustomerInput):
     """
     customer = Customer(customer_input.dict(), CHURN_MODEL)
     answer = customer.predict_subscription()
-    # Saving data and model response in the Database : 
-    CustomerLoader().historicize_api_calls(
-        customer_input=customer_input.dict(),
-        prediction=answer.values[0])
+    # Saving data and model response in the Database :
+    if config["server"]["historicize"]:
+        CustomerLoader().historicize_api_calls(
+            customer_input=customer_input.dict(), prediction=answer.values[0]
+        )
     return Answer(answer=answer)
 
 
@@ -239,12 +260,12 @@ def detect_item(customer_id):
         raise UnicornException(customer_id=customer_id)
     customer_loader = CustomerLoader()
     load_customer = customer_loader.find_a_customer(customer_id)
-    load_customer.drop(columns=['CHURN'])
+    load_customer.drop(columns=["CHURN"])
     dict_customer = load_customer.to_dict(orient="records")[0]
     customer = Customer(dict_customer, CHURN_MODEL)
     answer = customer.predict_subscription()
-    # Saving data and model response in the Database : 
+    # Saving data and model response in the Database :
     customer_loader.historicize_api_calls(
-        customer_input=dict_customer,
-        prediction=answer.values[0])
+        customer_input=dict_customer, prediction=answer.values[0]
+    )
     return Answer(answer=answer)
