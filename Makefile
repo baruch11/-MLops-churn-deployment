@@ -24,6 +24,7 @@ run-app-simple:
 	      --env GOOGLE_APPLICATION_CREDENTIALS=/usr/app/gcp_creds.json \
               -v $(GOOGLE_APPLICATION_CREDENTIALS):/usr/app/gcp_creds.json \
               -v $(shell pwd)/chaos/infrastructure/config/config.yml:/usr/app/chaos/infrastructure/config/config.yml \
+              -p 8000:8000 \
               churn:latest
 
 build-docker-image:
